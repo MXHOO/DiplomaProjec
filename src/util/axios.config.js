@@ -1,46 +1,40 @@
 // 封装axios
 import axios from 'axios'
-const router = window.app.config.globalProperties.$router
-const $notification = window.app.config.globalProperties.$notification
+import vue from 'vue'
+const router = vue.prototype.$$router
+// const $notification = window.app.config.globalProperties.$notification
 const service = axios.create({
   timeout: 20000,
   withCredentials: true,
   baseURL: '/api',
   headers: {
-    'token': 'eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MTcwODc4NjUsInVzZXJJZCI6MX0.Hd585CuKklv8Y6xUom1vf7l6ORj7ftRUdNS1qAAecmo'
+    'token': 'eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MTcxODU4NDIsInVzZXJJZCI6MX0.wwol1HhwlPox3Z5fDEEiiaAVku5ckbfWGLxoQ3aDgU4'
   }
 })
 
 service.interceptors.request.use(config => {
-  if(!config.headers.token) {
-    setTimeout(() => {router.push({path: '/login'})})
+  if (!config.headers.token) {
+    setTimeout(() => { router.push({ path: '/login' }) })
   }
   return config
 }, error => {
-  $notification.error({
-    message: '请求错误',
-    description: error
-  })
+  this.$notify.error(error.msg)
+  return Promise.reject(error)
 })
 
 service.interceptors.response.use(response => {
   const { data } = response
-  if(data.code === 0) {
+  if (data.code === 0) {
     return Promise.resolve(data)
   } else {
-    $notification.error({
-      message: '错误',
-      description: '发生了错误'
-    })
+    vue.prototype.$message.error(data.msg)
+    // router.push({ path: '/login' })
     return Promise.reject(data)
     // sessionStorage.removeItem('token')
-    // router.push({path: '/login'})
   }
 }, error => {
-  $notification.error({
-    message: '获取数据错误',
-    description: error
-  })
+  vue.prototype.$message.error(error.msg)
+  return Promise.reject(error.msg)
 })
 
 export default service

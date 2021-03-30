@@ -6,15 +6,15 @@
         <h3 class="title">作业反馈系统</h3>
       </div>
 
-      <el-form-item prop="userName">
+      <el-form-item prop="account">
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
         <el-input
-          ref="userName"
-          v-model="loginForm.userName"
+          ref="account"
+          v-model="loginForm.account"
           placeholder="用户名"
-          name="userName"
+          name="account"
           type="text"
           tabindex="1"
           auto-complete="on"
@@ -54,12 +54,12 @@
 
 <script>
 import { mapMutations } from 'vuex'
-import loginApi from '@/api/login'
+import { loginHandler } from '@/services/login.js'
 
 export default {
   name: 'Login',
   data () {
-    const validateUsername = (rule, value, callback) => {
+    const validateaccount = (rule, value, callback) => {
       if (value.length < 5) {
         callback(new Error('用户名不能少于5个字符'))
       } else {
@@ -75,12 +75,11 @@ export default {
     }
     return {
       loginForm: {
-        userName: '',
-        password: '',
-        remember: false
+        account: '',
+        password: ''
       },
       loginRules: {
-        userName: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        account: [{ required: true, trigger: 'blur', validator: validateaccount }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       passwordType: 'password',
@@ -93,8 +92,8 @@ export default {
     // window.addEventListener('storage', this.afterQRScan)
   },
   mounted () {
-    if (this.loginForm.userName === '') {
-      this.$refs.userName.focus()
+    if (this.loginForm.account === '') {
+      this.$refs.account.focus()
     } else if (this.loginForm.password === '') {
       this.$refs.password.focus()
     }
@@ -126,31 +125,15 @@ export default {
         this.$refs.password.focus()
       })
     },
-    handleLogin () {
-      let _this = this
-      this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          this.loading = true
-          loginApi.login(this.loginForm).then(function (result) {
-            if (result && result.code === 1) {
-              _this.setUserName(_this.loginForm.userName)
-              _this.$router.push({ path: '/' })
-            } else {
-              _this.loading = false
-              _this.$message({
-                message: result.message,
-                type: 'error'
-              })
-            }
-          }).catch(function (reason) {
-            _this.loading = false
-          })
-        } else {
-          return false
-        }
-      })
+    async handleLogin () {
+      this.loading = true
+      const { data } = await loginHandler(this.loginForm)
+      this.$message.success('登录成功！')
+      sessionStorage.setItem('token', data.token)
+      this.loading = false
+      this.$router.push({ path: '/' })
     },
-    ...mapMutations('user', ['setUserName'])
+    ...mapMutations('user', ['setaccount'])
   }
 }
 </script>
