@@ -8,9 +8,9 @@
 // export {get, post}
 // import { API_HOST } from '@/config/global.config'
 // const API_HOST = process.env.NODE_ENV === 'development' ? '/api' : ''
-const API_HOST = ''
-
 import fetch from '@/util/axios.config.js'
+
+const API_HOST = ''
 
 const DEFAULT_CONFIG = {
   isAutoMsg: true,
@@ -46,8 +46,8 @@ const POST_HEADER = {
  * @param {Obejct} config  请求配置
  * @returns Promise
  */
-export function get(url, params = {}, config = {}) {
-  let opts = {...DEFAULT_CONFIG, ...config}
+export function get (url, params = {}, config = {}) {
+  let opts = { ...DEFAULT_CONFIG, ...config }
   config.isLogin = true
   opts.params = getParams(params, opts)
   return fetch.get(getUrl(url, opts.isApiHost), opts)
@@ -63,8 +63,8 @@ export function get(url, params = {}, config = {}) {
  *
  * @memberOf HttpBase
  */
-export function post(url, params = {}, config = {}) {
-  let opts = {...DEFAULT_CONFIG, ...POST_HEADER, ...config}
+export function post (url, params = {}, config = {}) {
+  let opts = { ...DEFAULT_CONFIG, ...POST_HEADER, ...config }
   return fetch.post(getUrl(url, opts.isApiHost), getParams(params, opts), opts)
 }
 
@@ -77,8 +77,8 @@ export function post(url, params = {}, config = {}) {
  *
  * @memberOf HttpBase
  */
-export function put(url, params = {}, config = {}) {
-  let opts = {...DEFAULT_CONFIG, ...POST_HEADER, ...config}
+export function put (url, params = {}, config = {}) {
+  let opts = { ...DEFAULT_CONFIG, ...POST_HEADER, ...config }
   return fetch.put(getUrl(url, opts.isApiHost), getParams(params, opts), opts)
 }
 
@@ -91,10 +91,10 @@ export function put(url, params = {}, config = {}) {
  *
  * @memberOf HttpBase
  */
-export function Delete(url, params = {}, config = {}) {
-  let opts = {...DEFAULT_CONFIG, ...POST_HEADER, ...config}
+export function Delete (url, params = {}, config = {}) {
+  let opts = { ...DEFAULT_CONFIG, ...POST_HEADER, ...config }
   // return fetch.delete(getUrl(url, opts.isApiHost), getParams(params, opts), opts)
-  return fetch.delete(getUrl(url, opts.isApiHost), {...opts, data: getParams(params, opts)})
+  return fetch.delete(getUrl(url, opts.isApiHost), { ...opts, data: getParams(params, opts) })
 }
 
 /**
@@ -106,16 +106,16 @@ export function Delete(url, params = {}, config = {}) {
  * @param {any} [config={}] 配置
  * @returns Promise
  */
-export function upload(url, params = {}, config = {}) {
-  let opts = {...DEFAULT_CONFIG, ...POST_HEADER, ...config}
+export function upload (url, params = {}, config = {}) {
+  let opts = { ...DEFAULT_CONFIG, ...POST_HEADER, ...config }
   let form = new FormData()
   Object.keys(params).forEach(key => {
     form.append(key, params[key])
   })
   return fetch.post(getUrl(url, opts.isApiHost), form, opts)
 }
-export function uploadForPut(url, params = {}, config = {}) {
-  let opts = {...DEFAULT_CONFIG, ...POST_HEADER, ...config}
+export function uploadForPut (url, params = {}, config = {}) {
+  let opts = { ...DEFAULT_CONFIG, ...POST_HEADER, ...config }
   let form = new FormData()
   Object.keys(params).forEach(key => {
     form.append(key, params[key])
@@ -132,8 +132,8 @@ export function uploadForPut(url, params = {}, config = {}) {
  * @param {string} [type='post'] 请求类型
  * @param {any} [config={}] 配置
  */
-export function download(url, params = {}, type = 'post', config = {}) {
-  let opts = {...DEFAULT_CONFIG, ...POST_HEADER, ...config}
+export function download (url, params = {}, type = 'post', config = {}) {
+  let opts = { ...DEFAULT_CONFIG, ...POST_HEADER, ...config }
   let $form = document.createElement('form')
   $form.setAttribute('method', type)
   $form.setAttribute('hidden', 'hidden')
@@ -166,7 +166,7 @@ export function download(url, params = {}, type = 'post', config = {}) {
  * @returns
  *
  */
-function getUrl(url, isApiHost = null) {
+function getUrl (url, isApiHost = null) {
   if (!isApiHost) {
     return url
   }
@@ -182,7 +182,7 @@ function getUrl(url, isApiHost = null) {
  * @param {any} config 配置
  * @returns 返回新的参数
  */
-function getParams(params, config) {
+function getParams (params, config) {
   // 用户相关
   if (!config.isRemoveField) {
     return params
@@ -196,7 +196,7 @@ function getParams(params, config) {
  * @param {any} [params={}] 传入的参数
  * @param {any} [removeField=[]] 需要移除的列
  */
-function removeEmptyField(params = {}, removeField = []) {
+function removeEmptyField (params = {}, removeField = []) {
   let copyParams = JSON.parse(JSON.stringify(params))
   let arrField = removeField
   if (removeField.length === 0) {

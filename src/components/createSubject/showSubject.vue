@@ -1,24 +1,24 @@
 <template>
   <div>
-    <a-form>
-      <a-form-item v-for="(item, index) in subjectList" :key="index" :label="index + 1">
+    <el-form>
+      <el-form-item v-for="(item, index) in subjectList" :key="index" :label="index + 1">
         <span v-html="item.content.body"></span>
         <div v-if="item && item.problem_type === 1">
-          <a-radio-group>
-            <a-radio style="display: block; line-height: 30px; height: 30px;"
+          <el-radio-group>
+            <el-radio style="display: block; line-height: 30px; height: 30px;"
               v-for="(option,select_index) in item.content.options" :key="select_index" :value="option.key"
               :label="option.key">
               {{option.key}}. {{option.value}}
-            </a-radio>
-          </a-radio-group>
+            </el-radio>
+          </el-radio-group>
         </div>
 
         <div v-if="item && item.problem_type === 2">
-          <a-checkbox-group>
-            <a-checkbox v-for="(option,select_index) in item.content.options" :key="select_index" :value="option.key">
+          <el-checkbox-group>
+            <el-checkbox v-for="(option,select_index) in item.content.options" :key="select_index" :value="option.key">
               {{option.key}}. {{option.value}}
-            </a-checkbox>
-          </a-checkbox-group>
+            </el-checkbox>
+          </el-checkbox-group>
         </div>
 
         <div v-if="item && item.problem_type === 3">
@@ -27,26 +27,24 @@
 
         <div v-if="item && item.problem_type === 4">
         </div>
-      </a-form-item>
-    </a-form>
+      </el-form-item>
+    </el-form>
   </div>
 </template>
 <script>
-import { reactive, watch } from 'vue'
 import { getSubject } from './handleSubject'
 export default {
-  setup () {
-    let subjectList = reactive([])
-    subjectList = getSubject() || []
-    watch(() => subjectList, val => {
-      subjectList = val
-    })
-    const length = subjectList.length || 0
-    let answerList = reactive([])
-    answerList = new Array(length).fill(null)
+  data () {
     return {
-      subjectList,
-      answerList
+      subjectList: getSubject() || []
+
+    }
+  },
+  computed: {
+  },
+  methods: {
+    answerList () {
+      return this.subjectList.length.fill(null)
     }
   }
 }

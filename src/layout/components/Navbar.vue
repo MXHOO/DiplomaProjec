@@ -26,7 +26,6 @@
 
 <script>
 import { mapGetters, mapMutations } from 'vuex'
-import loginApi from '@/api/login'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 
@@ -48,12 +47,8 @@ export default {
     },
     logout () {
       let _this = this
-      loginApi.logout().then(function (result) {
-        if (result && result.code === 1) {
-          _this.clearLogin()
-          _this.$router.push({ path: '/login' })
-        }
-      })
+      sessionStorage.removeItem('token')
+      _this.$router.push({ path: '/login' })
     },
     ...mapMutations('user', ['clearLogin'])
   }

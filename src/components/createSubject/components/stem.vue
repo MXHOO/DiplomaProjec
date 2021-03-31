@@ -32,20 +32,19 @@ export default {
         editor.menus.extend(key, fillMenu)
         editorConfig(editor)
         editor.config.menus.push(key)
-   
       } else {
         editorConfig(editor)
       }
-        editor.config.onchange = function (newHtml) {
-          content.html = newHtml
-        }
+      editor.config.onchange = function (newHtml) {
+        content.html = newHtml
+      }
       editor.create()
       stemList.push(editor)
     }
 
-    // 销毁编辑器 
+    // 销毁编辑器
     const destroyEditor = () => {
-     if(stemList && stemList.length > 0) {
+      if (stemList && stemList.length > 0) {
         stemList.forEach(item => item && item.destroy())
         stemList = []
       }

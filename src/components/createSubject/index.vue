@@ -1,60 +1,43 @@
 <template>
   <div>
-    <a-button type="primary" @click="showModal">创建题目</a-button>
+    <el-button type="primary" @click="showModal">创建题目</el-button>
     <div id="edit" v-html="edit"></div>
     <show-subject ref="showSubjectRef"></show-subject>
-    <a-modal :visible="visible" title="创建题目" @ok="handleOk" @cancel="cancelModal" width="800px">
-      <a-form v-bind="layout">
-        <a-form-item label="题目类型">
-          <a-select v-model="subjectType" style="width: 120px; margin: 10px;" ref="select" @change="selectChange">
-            <a-select-option value="单选">单选题</a-select-option>
-            <a-select-option value="多选">多选题</a-select-option>
-            <a-select-option value="填空">填空题</a-select-option>
-            <a-select-option value="主观">主观题</a-select-option>
-          </a-select>
-        </a-form-item>
-        <a-form-item label="题干">
+    <el-dialog :visible="visible" title="创建题目" @ok="handleOk" @cancel="cancelModal" width="800px">
+      <el-form v-bind="layout">
+        <el-form-item label="题目类型">
+          <el-select v-model="subjectType" style="width: 120px; margin: 10px;" ref="select" @change="selectChange">
+            <el-option value="单选">单选题</el-option>
+            <el-option value="多选">多选题</el-option>
+            <el-option value="填空">填空题</el-option>
+            <el-option value="主观">主观题</el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="题干">
           <stem :subjectType="subjectType" ref="stemRef"></stem>
-        </a-form-item>
-        <a-form-item label="选项" v-if="subjectType === '单选' || subjectType === '多选'">
+        </el-form-item>
+        <el-form-item label="选项" v-if="subjectType === '单选' || subjectType === '多选'">
           <singleChoice ref="singleChoiceRef" v-if="subjectType === '单选'"></singleChoice>
           <multipleChoice ref="multipleChoiceRef" v-if="subjectType === '多选'"></multipleChoice>
-        </a-form-item>
-        <a-form-item label="备注">
+        </el-form-item>
+        <el-form-item label="备注">
           <remark></remark>
-        </a-form-item>
-        <a-form-item label="分值">
+        </el-form-item>
+        <el-form-item label="分值">
           <a-input-number v-model="score" :min="1" :max="10" />
-        </a-form-item>
-      </a-form>
-    </a-modal>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 <script>
-import {
-  showModal,
-  handleOk,
-  editContent,
-  visible,
-  subjectType,
-  selectChange,
-  cancelModal,
-  singleChoiceRef,
-  multipleChoiceRef,
-  subjectiveRef,
-  fillBlankRef,
-  stemRef,
-  score,
-  edit,
-  showSubjectRef
-} from './index.js'
 import showSubject from './showSubject.vue'
+import 'highlight.js/styles/github.css'
 import remark from '@/components/createSubject/components/remark.vue'
 import singleChoice from '@/components/createSubject/components/singleChoice.vue'
 import multipleChoice from '@/components/createSubject/components/multipleChoice.vue'
 import stem from '@/components/createSubject/components/stem.vue'
-import { reactive, ref, onMounted, watch } from 'vue'
-import { getSubject } from './handleSubject.js'
+import { getSubject, setSubject } from './handleSubject.js'
 export default {
   components: {
     singleChoice,
@@ -69,40 +52,104 @@ export default {
       default: ''
     }
   },
-  setup () {
-    onMounted(() => {
-    })
-    const layout = {
-      labelCol: { span: 4 },
-      wrapperCol: { span: 20 }
-    }
-    watch(visible, (val) => {
-      if (!val) {
-        showSubjectRef.value.subjectList = getSubject()
-      }
-    })
-    // 下拉框
-    let editorOption = reactive({})
-    let content = ref('')
+  data () {
     return {
-      content,
-      editContent,
-      editorOption,
-      visible,
-      showModal,
-      handleOk,
-      subjectType,
-      selectChange,
-      cancelModal,
-      singleChoiceRef,
-      multipleChoiceRef,
-      subjectiveRef,
-      fillBlankRef,
-      stemRef,
-      score,
-      layout,
-      edit,
-      showSubjectRef
+      layout: {
+        labelCol: { span: 4 },
+        wrapperCol: { span: 20 }
+      },
+      editorOption: {},
+      content: '',
+      score: '',
+      edit: '',
+      editor: null
+    }
+  },
+  watch: {
+    visible: {
+      handler: function (val) {
+        this.$refs.showSubjectRef.subjectList = getSubject()
+      }
+    }
+  },
+  methods: {
+    processParam () {
+      const param = {
+        content: {
+          score: this.score,
+          body: this.$refs.stemRef.value.content.html
+        }
+      }
+      console.log('题干内容----', this.$refs.stemRef.value.content.html)
+      switch (this.subjectType) {
+        case '单选':
+          if (this.$refs.singleChoiceRef.value.editorList && this.$refs.singleChoiceRef.value.editorList.length > 0) {
+            const result = this.$refs.singleChoiceRef.value.editorList.map((element, index) => {
+              return { key: String.fromCharCode(65 + parseInt(index)), value: element.txt.text() }
+            })
+            param.content.options = result
+          }
+          param.problem_type = 1
+          this.edit = param.content.options
+          break
+
+        case '多选':
+          if (this.$refs.multipleChoiceRef.value.editorList && this.$refs.multipleChoiceRef.value.editorList.length > 0) {
+            const result = this.$refs.multipleChoiceRef.value.editorList.map((element, index) => {
+              return { key: String.fromCharCode(65 + parseInt(index)), value: element.txt.text() }
+            })
+            param.content.options = result
+          }
+          param.problem_type = 2
+          break
+
+        case '填空':
+          param.problem_type = 3
+          break
+
+        case '主观':
+          param.problem_type = 4
+          break
+      }
+      setSubject(param)
+    },
+    replaceFill (html) {
+      const temp = html.replace(/【填空】/g, '<input class="fillContent" style="margin: 10px;"/>')
+      this.edit = temp
+    },
+    handleOk () {
+      this.processParam()
+      // editContent = editor.txt.getJSON()
+      // const html = editor.txt.html()
+      // if (subjectType.value === '填空') {
+      //   replaceFill(html)
+      // } else {
+      //   document.getElementById('edit').innerHTML = html
+      // }
+      this.cancelModal()
+      this.visible = false
+    },
+    cancelModal () {
+      this.editor && this.editor.destroy()
+      this.editor = null
+      if (this.subjectType === '单选') {
+        if (this.$refs.singleChoiceRef.editorList && this.$refs.singleChoiceRef.editorList.length > 0) {
+          this.$refs.singleChoiceRef.editorList.forEach((element) => {
+            element.destroy()
+          })
+          this.$refs.singleChoiceRef.elementList = []
+          this.$refs.singleChoiceRef.optionList = []
+        }
+        this.subjectType = '填空'
+      }
+    },
+
+    // 题目类型改变
+    selectChange () {
+      if (this.editor) {
+        this.editor.destroy()
+        this.editor = null
+      }
     }
   }
 }
