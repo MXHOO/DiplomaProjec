@@ -80,7 +80,6 @@ export default {
           body: this.$refs.stemRef.value.content.html
         }
       }
-      console.log('题干内容----', this.$refs.stemRef.value.content.html)
       switch (this.subjectType) {
         case '单选':
           if (this.$refs.singleChoiceRef.value.editorList && this.$refs.singleChoiceRef.value.editorList.length > 0) {

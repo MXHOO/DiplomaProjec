@@ -8,60 +8,45 @@
       <a-radio class="radio" v-for="(item, index) in optionList" :value="index" :label="index" :key="item.key">
         <p class="title">选项{{String.fromCharCode(65 + parseInt(index))}}</p>
         <div  class="option markdown" :id="'option_' + index"></div>
-        <div class="minus"><MinusCircleOutlined @click="removeOption(item)"/></div>
+        <div class="minus"><i class="el-icon-minus" @click="removeOption(item)"></i></div>
       </a-radio>
     </a-radio-group>
   </div>
  </div>
 </template>
 <script>
-import { MinusCircleOutlined } from '@ant-design/icons-vue'
-import { nextTick, onBeforeUnmount, reactive, ref } from 'vue'
 import 'highlight.js/styles/github.css'
 import editorConfig from '@/components/createSubject/editorConfig.js'
 import Editor from 'wangeditor'
 export default {
-  components: {
-    MinusCircleOutlined
+  data () {
+    return {
+      rightAnswer: '',
+      optionList: [],
+      result: {},
+      editorList: []
+    }
   },
-  setup () {
-    const rightAnswer = ref('')
-    let optionList = reactive([])
-    const result = reactive({})
-
-    // 新增选项
-    let editorList = reactive([])
-    const addOption = function () {
-      optionList.push({ key: Date.now() })
-      nextTick(() => {
-        const element = document.getElementById(`option_${optionList.length - 1}`)
+  methods: {
+    addOption () {
+      this.optionList.push({ key: Date.now() })
+      this.$nextTick(() => {
+        const element = document.getElementById(`option_${this.optionList.length - 1}`)
         const temp = new Editor(element)
         editorConfig(temp)
         temp.create()
-        editorList.push(temp)
+        this.editorList.push(temp)
       })
+    },
+    removeOption (item) {
+      this.optionList.splice(item, 1)
+      this.editorList.slice(item, 1)
     }
-
-    // 移除选项
-    const removeOption = function (item) {
-      optionList.splice(item, 1)
-      editorList.slice(item, 1)
-    }
-
-    onBeforeUnmount(() => {
-      if (optionList && optionList.length > 0) {
-        optionList = []
-        editorList.length > 0 && editorList.forEach(item => item && item.destroy())
-      }
-    })
-
-    return {
-      optionList,
-      rightAnswer,
-      addOption,
-      removeOption,
-      result,
-      editorList
+  },
+  beforeDestroy () {
+    if (this.optionList && this.optionList.length > 0) {
+      this.optionList = []
+      this.editorList.length > 0 && this.editorList.forEach(item => item && item.destroy())
     }
   }
 }

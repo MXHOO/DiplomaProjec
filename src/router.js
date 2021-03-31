@@ -82,6 +82,7 @@ const constantRoutes = [
       },
       {
         path: 'homework/list',
+        name: 'HomeWrokList',
         component: () => import('@/views/createWork/index.vue'),
         meta: { title: '作业列表', noCache: true }
       },
@@ -89,22 +90,19 @@ const constantRoutes = [
         path: 'question/edit/singleChoice',
         component: () => import('@/views/exam/question/edit/single-choice'),
         name: 'singleChoicePage',
-        meta: { title: '单选题编辑', noCache: true, activeMenu: '/exam/question/list' },
-        hidden: true
+        meta: { title: '单选题编辑', noCache: true, activeMenu: '/exam/question/list' }
       },
       {
         path: 'question/edit/multipleChoice',
         component: () => import('@/views/exam/question/edit/multiple-choice'),
         name: 'multipleChoicePage',
-        meta: { title: '多选题编辑', noCache: true, activeMenu: '/exam/question/list' },
-        hidden: true
+        meta: { title: '多选题编辑', noCache: true, activeMenu: '/exam/question/list' }
       },
       {
         path: 'question/edit/trueFalse',
         component: () => import('@/views/exam/question/edit/true-false'),
         name: 'trueFalsePage',
-        meta: { title: '判断题编辑', noCache: true, activeMenu: '/exam/question/list' },
-        hidden: true
+        meta: { title: '判断题编辑', noCache: true, activeMenu: '/exam/question/list' }
       },
       {
         path: 'question/edit/gapFilling',
@@ -117,8 +115,7 @@ const constantRoutes = [
         path: 'question/edit/shortAnswer',
         component: () => import('@/views/exam/question/edit/short-answer'),
         name: 'shortAnswerPage',
-        meta: { title: '简答题编辑', noCache: true, activeMenu: '/exam/question/list' },
-        hidden: true
+        meta: { title: '简答题编辑', noCache: true, activeMenu: '/exam/question/list' }
       }
     ]
   },
@@ -200,6 +197,12 @@ const constantRoutes = [
         meta: { title: '个人简介', icon: 'user', noCache: true }
       }
     ]
+  },
+  {
+    path: '/edit/:homework_id',
+    component: () => import('@/components/createSubject/index.vue'),
+    name: 'CreateProject',
+    meta: { title: '题目创建' }
   },
   { path: '*',
     hidden: true,

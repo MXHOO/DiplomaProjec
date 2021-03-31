@@ -8,7 +8,7 @@ const service = axios.create({
   withCredentials: true,
   baseURL: '/api',
   headers: {
-    'token': 'eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MTcyNzI0MDUsInVzZXJJZCI6MX0.UzKQzpiy4SLP12nlh2BO0cUazSXNbkhN3XsUPW-Q-Tg'
+    'token': sessionStorage.getItem('token')
   }
 })
 

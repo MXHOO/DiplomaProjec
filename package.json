@@ -17,6 +17,7 @@
         "axios": "^0.19.0",
         "core-js": "^3.9.1",
         "element-ui": "^2.15.1",
+        "highlight.js": "^10.7.1",
         "js-cookie": "2.2.0",
         "normalize.css": "8.0.1",
         "nprogress": "0.2.0",
@@ -24,7 +25,8 @@
         "vue-clipboard2": "^0.3.1",
         "vue-count-to": "^1.0.13",
         "vue-router": "^3.5.1",
-        "vuex": "^3.6.2"
+        "vuex": "^3.6.2",
+        "wangeditor": "^4.6.12"
     },
     "devDependencies": {
         "@vue/cli-plugin-babel": "^4.5.12",
