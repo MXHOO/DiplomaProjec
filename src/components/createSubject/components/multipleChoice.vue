@@ -1,13 +1,13 @@
 <template>
   <div>
-    <a-button type="primary" @click="addOption">增加选项</a-button>
-    <a-checkbox-group v-model="checkedList">
-      <a-checkbox class="radio" v-for="(item, index) in optionList" :value="index" :label="index" :key="item.key">
-        <p class="title">选项{{String.fromCharCode(65 + parseInt(index))}}</p>
+    <el-button type="primary" @click="addOption">增加选项</el-button>
+    <el-checkbox-group v-model="checkedList">
+      <el-checkbox class="radio" v-for="(item, index) in optionList" :value="index" :label="index" :key="item.key">
+        <span class="title">选项{{String.fromCharCode(65 + parseInt(index))}}</span>
         <div  class="option markdown" :id="'option_' + index"></div>
         <div class="minus"><i class="el-icon-minus" @click="removeOption(item)"/></div>
-      </a-checkbox>
-    </a-checkbox-group>
+      </el-checkbox>
+    </el-checkbox-group>
   </div>
 </template>
 <script>

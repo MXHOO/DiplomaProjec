@@ -1,10 +1,7 @@
 <template>
   <div>
-    <p>
-      <a-checkbox :checked="checked">添加答案解析</a-checkbox>
-    </p>
-    <div id="remarkContent" ref="remarkContentRef">
-    </div>
+    <el-checkbox v-model="checked">添加答案解析</el-checkbox>
+    <div id="remarkContent" ref="remarkContentRef"/>
   </div>
 </template>
 <script>

@@ -29,6 +29,7 @@ export default {
   },
   methods: {
     createEditor () {
+      const self = this
       this.editor = new Editor(document.getElementById('subjectContent'))
       if (this.subjectType === '填空') {
         const key = 'fillMenu'
@@ -39,7 +40,7 @@ export default {
         editorConfig(this.editor)
       }
       this.editor.config.onchange = function (newHtml) {
-        this.content.html = newHtml
+        self.content.html = newHtml
       }
       this.editor.create()
       this.stemList.push(this.editor)

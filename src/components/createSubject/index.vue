@@ -3,8 +3,8 @@
     <el-button type="primary" @click="showModal">创建题目</el-button>
     <div id="edit" v-html="edit"></div>
     <show-subject ref="showSubjectRef"></show-subject>
-    <el-dialog :visible="visible" title="创建题目" @ok="handleOk" @cancel="cancelModal" width="800px">
-      <el-form v-bind="layout">
+    <el-dialog :visible="visible" title="创建题目" @close="cancelModal" width="800px">
+      <el-form label-width="100px">
         <el-form-item label="题目类型">
           <el-select v-model="subjectType" style="width: 120px; margin: 10px;" ref="select" @change="selectChange">
             <el-option value="单选">单选题</el-option>
@@ -24,9 +24,13 @@
           <remark></remark>
         </el-form-item>
         <el-form-item label="分值">
-          <a-input-number v-model="score" :min="1" :max="10" />
+          <el-input-number v-model="score" :min="1" :max="10" />
         </el-form-item>
       </el-form>
+      <div slot="footer">
+        <el-button type="primary" @click="handleOk">确定</el-button>
+        <el-button @click="cancelModal">取消</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -54,15 +58,13 @@ export default {
   },
   data () {
     return {
-      layout: {
-        labelCol: { span: 4 },
-        wrapperCol: { span: 20 }
-      },
       editorOption: {},
       content: '',
       score: '',
       edit: '',
-      editor: null
+      editor: null,
+      visible: false,
+      subjectType: ''
     }
   },
   watch: {
@@ -73,11 +75,14 @@ export default {
     }
   },
   methods: {
+    showModal () {
+      this.visible = true
+    },
     processParam () {
       const param = {
         content: {
           score: this.score,
-          body: this.$refs.stemRef.value.content.html
+          body: this.$refs.stemRef.content.html
         }
       }
       switch (this.subjectType) {

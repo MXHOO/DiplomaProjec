@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-form>
-      <el-form-item v-for="(item, index) in subjectList" :key="index" :label="index + 1">
+      <el-form-item v-for="(item, index) in subjectList" :key="index" :label="index + 1 + ''">
         <span v-html="item.content.body"></span>
         <div v-if="item && item.problem_type === 1">
           <el-radio-group>
@@ -21,12 +21,9 @@
           </el-checkbox-group>
         </div>
 
-        <div v-if="item && item.problem_type === 3">
-          <div></div>
-        </div>
+        <div v-if="item && item.problem_type === 3"/>
 
-        <div v-if="item && item.problem_type === 4">
-        </div>
+        <div v-if="item && item.problem_type === 4"/>
       </el-form-item>
     </el-form>
   </div>

@@ -1,16 +1,16 @@
 <template>
  <div>
     <div>
-    <a-button type="primary" @click="addOption">增加选项</a-button>
+    <el-button type="primary" @click="addOption" size="small">增加选项</el-button>
   </div>
   <div>
-    <a-radio-group :a-radio-groupvalue="rightAnswer">
-      <a-radio class="radio" v-for="(item, index) in optionList" :value="index" :label="index" :key="item.key">
-        <p class="title">选项{{String.fromCharCode(65 + parseInt(index))}}</p>
-        <div  class="option markdown" :id="'option_' + index"></div>
-        <div class="minus"><i class="el-icon-minus" @click="removeOption(item)"></i></div>
-      </a-radio>
-    </a-radio-group>
+    <el-radio-group v-model="rightAnswer" style="width: 100%;">
+      <el-radio class="radio" v-for="(item, index) in optionList" :value="index" :label="index" :key="item.key">
+        <div class="title">选项{{String.fromCharCode(65 + parseInt(index))}}</div>
+        <div class="markdown" :id="'option_' + index"></div>
+        <div class="minus"><i class="el-icon-remove-outline" @click="removeOption(item)"></i></div>
+      </el-radio>
+    </el-radio-group>
   </div>
  </div>
 </template>
@@ -53,17 +53,17 @@ export default {
 </script>
 <style scoped>
 .radio {
-  display: block;
-  position: relative;
+  padding-top: 15px;
+  display: flex;
 }
-.title .minus .markdown{
-  position: absolute;
+.minus {
+  width: 50px;
 }
 .title {
-  width: 30px;
+  padding-bottom: 15px;
+  width: 50px;
 }
 .markdown {
-  top: 0;
-  left: 30px;
+  flex: 1;
 }
 </style>

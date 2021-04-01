@@ -38,13 +38,13 @@
         </template>
       </el-pagination>
     </div> -->
-    <el-dialog title="创建作业" :visible="visible" @close="cancelModal">
-      <el-form :model="work" v-bind="layout" :rules="rules" :inline="true">
-        <el-form-item label="作业名字" placeholder="请输入作业名字" name="homework_name" style="width: 400px;">
-          <el-input v-model="work.homework_name"></el-input>
+    <el-dialog title="创建作业" :visible="visible" @close="cancelModal" center width="500px">
+      <el-form :model="work" :rules="rules" :inline="true">
+        <el-form-item label="作业名字:" placeholder="请输入作业名字" name="homework_name">
+          <el-input v-model="work.homework_name"  style="width: 350px;"></el-input>
         </el-form-item>
-        <el-form-item label="作业须知" placeholder="请输入作业须知" name="homework_notice" style="width: 400px;">
-          <el-input type="textarea" v-model="work.homework_notice"></el-input>
+        <el-form-item label="作业须知:" placeholder="请输入作业须知" name="homework_notice">
+          <el-input type="textarea" v-model="work.homework_notice" style="width: 350px;"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer">
