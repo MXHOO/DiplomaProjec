@@ -1,6 +1,7 @@
 <template>
   <div>
-    <el-button type="primary" @click="showModal">创建题目</el-button>
+    <el-button type="primary" @click="showModal" style="margin: 20px;" size="small">创建题目</el-button>
+    <el-button type="success" @click="save" style="margin: 20px 0;" size="small" v-if="problem_ids.length > 0">保存作业</el-button>
     <div id="edit" v-html="edit"></div>
     <show-subject ref="showSubjectRef"></show-subject>
     <el-dialog :visible="visible" title="创建题目" @close="cancelModal" width="800px">
@@ -42,6 +43,7 @@ import singleChoice from '@/components/createSubject/components/singleChoice.vue
 import multipleChoice from '@/components/createSubject/components/multipleChoice.vue'
 import stem from '@/components/createSubject/components/stem.vue'
 import { getSubject, setSubject } from './handleSubject.js'
+import { getSubjects, createProblem, saveHomework } from '@/services/createSubject.js'
 export default {
   components: {
     singleChoice,
@@ -58,6 +60,7 @@ export default {
   },
   data () {
     return {
+      homework_id: '',
       editorOption: {},
       content: '',
       score: '',
@@ -74,15 +77,35 @@ export default {
       }
     }
   },
+  created () {
+    this.homework_id = this.$route.params.homework_id
+    this.getAllSubject()
+  },
+  computed: {
+    problem_ids () {
+      return [8]
+    }
+  },
   methods: {
+    async getAllSubject () {
+      const { data } = await getSubjects({ homework_id: this.homework_id })
+      console.log('获取到的课程数据', data)
+    },
+    async save () {
+      await saveHomework({ 'homework_id': this.homework_id, 'problem_ids': this.problem_ids })
+      this.$notify.success('作业保存成功！')
+      this.getAllSubject()
+    },
     showModal () {
       this.visible = true
     },
-    processParam () {
+    async processParam () {
       const param = {
         content: {
           score: this.score,
-          body: this.$refs.stemRef.content.html
+          body: this.$refs.stemRef.content.html,
+          has_remark: false,
+          remark: '111'
         }
       }
       switch (this.subjectType) {
@@ -115,6 +138,7 @@ export default {
           param.problem_type = 4
           break
       }
+      await createProblem(param)
       setSubject(param)
     },
     replaceFill (html) {
@@ -147,7 +171,6 @@ export default {
         this.subjectType = '填空'
       }
     },
-
     // 题目类型改变
     selectChange () {
       if (this.editor) {

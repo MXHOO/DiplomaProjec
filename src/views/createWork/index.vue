@@ -2,7 +2,7 @@
   <div>
     <el-row>
       <el-col :span="18">
-        <el-form size="small" :inline="true">
+        <el-form size="small" :inline="true" style="margin: 20px;">
           <el-form-item>
             <el-input v-model="work.homework_id" placeholder="请输入作业ID"></el-input>
           </el-form-item>
@@ -20,7 +20,7 @@
         </el-form>
       </el-col>
       <el-col :span="6">
-        <el-button type="primary" @click="showModal">创建作业</el-button>
+        <el-button type="primary" @click="showModal" style="margin: 20px;" size="small">创建作业</el-button>
       </el-col>
     </el-row>
     <div class="rc-mysite__site-list">
@@ -40,10 +40,10 @@
     </div> -->
     <el-dialog title="创建作业" :visible="visible" @close="cancelModal" center width="500px">
       <el-form :model="work" :rules="rules" :inline="true">
-        <el-form-item label="作业名字:" placeholder="请输入作业名字" name="homework_name">
+        <el-form-item label="作业名字:" placeholder="请输入作业名字" prop="homework_name">
           <el-input v-model="work.homework_name"  style="width: 350px;"></el-input>
         </el-form-item>
-        <el-form-item label="作业须知:" placeholder="请输入作业须知" name="homework_notice">
+        <el-form-item label="作业须知:" placeholder="请输入作业须知" prop="homework_notice">
           <el-input type="textarea" v-model="work.homework_notice" style="width: 350px;"></el-input>
         </el-form-item>
       </el-form>
@@ -127,7 +127,8 @@ export default {
     },
     async handleOk () {
       const { data } = await createWork(this.work)
-      console.log(data)
+      this.$notify.success('创建作业成功！')
+      this.$router.push({ path: `/edit/${data}` })
     },
     search () {
       console.log('搜索')

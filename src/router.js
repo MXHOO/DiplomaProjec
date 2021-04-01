@@ -202,7 +202,8 @@ const constantRoutes = [
     path: '/edit/:homework_id',
     component: () => import('@/components/createSubject/index.vue'),
     name: 'CreateProject',
-    meta: { title: '题目创建' }
+    meta: { title: '题目创建' },
+    hidden: true
   },
   { path: '*',
     hidden: true,

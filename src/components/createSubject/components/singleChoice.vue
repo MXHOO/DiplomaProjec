@@ -5,7 +5,7 @@
   </div>
   <div>
     <el-radio-group v-model="rightAnswer" style="width: 100%;">
-      <el-radio class="radio" v-for="(item, index) in optionList" :value="index" :label="index" :key="item.key">
+      <el-radio class="radio" v-for="(item, index) in optionList" :value="index" :label="index" :key="item.key" @change="changeRadio">
         <div class="title">选项{{String.fromCharCode(65 + parseInt(index))}}</div>
         <div class="markdown" :id="'option_' + index"></div>
         <div class="minus"><i class="el-icon-remove-outline" @click="removeOption(item)"></i></div>
@@ -41,6 +41,9 @@ export default {
     removeOption (item) {
       this.optionList.splice(item, 1)
       this.editorList.slice(item, 1)
+    },
+    changeRadio () {
+      console.log('切换radio.并获取焦点')
     }
   },
   beforeDestroy () {

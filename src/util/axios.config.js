@@ -34,7 +34,7 @@ service.interceptors.response.use(response => {
     // sessionStorage.removeItem('token')
   }
 }, error => {
-  vue.prototype.$message.error(error.msg)
+  vue.prototype.$message.error(error.msg || error)
   return Promise.reject(error.msg)
 })
 
