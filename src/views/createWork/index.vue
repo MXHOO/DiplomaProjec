@@ -131,7 +131,7 @@ export default {
       this.$router.push({ path: `/edit/${data}` })
     },
     search () {
-      console.log('搜索')
+      // console.log('搜索')
     },
     // 清除校验
     clearValid () {
@@ -150,10 +150,10 @@ export default {
       this.getSitesList()
     },
     handlerDeleteHomework () {
-      console.log('删除作业')
+      // console.log('删除作业')
     },
     saveHomework () {
-      console.log('保存作业')
+      // console.log('保存作业')
     }
   }
 }

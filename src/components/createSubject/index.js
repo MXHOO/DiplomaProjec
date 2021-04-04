@@ -64,7 +64,7 @@ function processParam () {
       body: stemRef.value.content.html
     }
   }
-  console.log('题干内容----', stemRef.value.content.html)
+  // console.log('题干内容----', stemRef.value.content.html)
   switch (subjectType.value) {
     case '单选':
       if (singleChoiceRef.value.editorList && singleChoiceRef.value.editorList.length > 0) {

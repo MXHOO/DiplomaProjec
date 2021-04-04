@@ -43,7 +43,7 @@ export default {
       this.editorList.slice(item, 1)
     },
     changeRadio () {
-      console.log('切换radio.并获取焦点')
+      // console.log('切换radio.并获取焦点')
     }
   },
   beforeDestroy () {

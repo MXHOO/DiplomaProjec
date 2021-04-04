@@ -39,7 +39,7 @@ export default {
       this.userInfo = data
     },
     submit () {
-      console.log('更新个人信息')
+      // console.log('更新个人信息')
     }
   }
 }

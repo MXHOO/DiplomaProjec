@@ -87,6 +87,12 @@ const constantRoutes = [
         meta: { title: '作业列表', noCache: true }
       },
       {
+        path: 'homework/correct',
+        name: 'HomeWrokCcorrect',
+        component: () => import('@/views/createWork/index.vue'),
+        meta: { title: '批改作业', noCache: true }
+      },
+      {
         path: 'question/edit/singleChoice',
         component: () => import('@/views/exam/question/edit/single-choice'),
         name: 'singleChoicePage',

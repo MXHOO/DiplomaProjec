@@ -82,7 +82,7 @@ export default {
   created () {
     this.homework_id = this.$route.params.homework_id
     this.getAllSubject()
-    console.log('problem_ids', this.problem_ids)
+    // console.log('problem_ids', this.problem_ids)
   },
   computed: {
     ...mapGetters({
