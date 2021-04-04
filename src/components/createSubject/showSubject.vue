@@ -29,11 +29,10 @@
   </div>
 </template>
 <script>
-import { getSubject } from './handleSubject'
 export default {
   data () {
     return {
-      subjectList: getSubject() || []
+      subjectList: []
     }
   },
   computed: {

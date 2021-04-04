@@ -26,7 +26,7 @@
             <i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item @click="deleteHomework">
+            <el-dropdown-item @click.native="deleteHomework">
               <i class="el-icon-delete operator" style="font-size: 14px;"> 删除作业</i>
             </el-dropdown-item>
           </el-dropdown-menu>
@@ -55,7 +55,6 @@
   </div>
 </template>
 <script>
-// import { previewWorkUrl } from '@/services/work.service'
 export default {
   props: {
     siteDetail: {
@@ -105,15 +104,14 @@ export default {
       this.$message.error('内容复制失败,请重新复制！', 0.5)
     },
     editSiteContent () {
-      // this.$router.push(`/editor/${this.siteDetail.activityId}`)
+      this.$router.push(`/edit/${this.siteDetail.homework_id}`)
     },
     // 删除作业
     deleteHomework () {
-      console.log('删除作业')
-      // const self = this
-      // this.$confirm('确认删除该作业吗？', '提示').then(_ => {
-      //   self.$emit('deleteHomework', self.siteDetail.activityId)
-      // }).catch(_ => {})
+      const self = this
+      this.$confirm('确认删除该作业吗？', '提示').then(_ => {
+        self.$emit('deleteHomework', self.siteDetail.homework_id)
+      }).catch(_ => {})
     }
   }
 }

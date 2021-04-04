@@ -25,7 +25,7 @@
     </el-row>
     <div class="rc-mysite__site-list">
       <div class="nothing" v-show="list.length === 0">
-        <p>没有数据，请先创建站点！</p>
+        <p>没有数据，请先创建作业！</p>
       </div>
       <homeWork @saveHomework="saveHomework" v-for="item in list" :siteDetail="item" :key="item.pageID"
         @deleteHomework="handlerDeleteHomework"></homeWork>

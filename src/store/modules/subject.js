@@ -1,29 +1,41 @@
 const state = {
-  homeworkList: [],
   subjectList: []
 }
 
 const getters = {
   getSubjectList: (state) => {
     return state.subjectList
+  },
+  getSubjectIds: (state) => {
+    return state.subjectList.map(item => item.problem_id) || []
   }
 }
 
 const mutations = {
   setSubjectList: (state, payload) => {
-    const subjectId = payload.problem_id
-    const index = state.homeworkList.indexOf(item => item.problem_id === subjectId)
-    if (index >= 0) {
-      state.homeworkList.splice(index, 1)
+    if (state.subjectList.length === 0) {
+      state.subjectList = payload
+    } else {
+      const subjectId = payload.problem_id
+      const result = state.subjectList.indexOf(item => item.problem_id === subjectId)
+      if (result >= 0) {
+        state.subjectList.splice(result, 1)
+      }
+      state.subjectList.push(payload)
     }
-    state.homeworkList.push(payload)
   },
+  // 移除课程
   deleteSubject: (state, payload) => {
-
+    const subjectId = payload.problem_id
+    const result = state.subjectList.indexOf(item => item.problem_id === subjectId)
+    if (result >= 0) {
+      state.subjectList.splice(result, 1)
+    }
   }
 }
 
-export {
+export default {
+  namespaced: true,
   state,
   getters,
   mutations

@@ -1,10 +1,16 @@
 <template>
-  <el-form>
-    <el-form-item label="真实姓名">
-      <el-input v-model.trim="userInfo.realName" />
+  <el-form :model="userInfo" :rules="rules">
+    <el-form-item label="用户姓名" prop="user_name">
+      <el-input v-model.trim="userInfo.user_name" />
     </el-form-item>
-    <el-form-item label="手机号">
-      <el-input v-model.trim="userInfo.phone" />
+    <el-form-item label="用户角色">
+      <span>{{userInfo.role_names}}</span>
+    </el-form-item>
+    <el-form-item label="邮箱" prop="email">
+      <el-input v-model.trim="userInfo.email" />
+    </el-form-item>
+    <el-form-item label="教学班级">
+      <p>{{ userInfo.study_class_ids }}</p>
     </el-form-item>
     <el-form-item>
       <el-button type="primary" @click="submit">更新</el-button>
@@ -13,29 +19,27 @@
 </template>
 
 <script>
-import userApi from '@/api/user'
+import { getUserInfo } from '@/services/userInfo.js'
 export default {
-  props: {
-    userInfo: {
-      type: Object,
-      default: () => {
-        return {
-          realName: '',
-          phone: ''
-        }
+  data () {
+    return {
+      userInfo: {},
+      rules: {
+        user_name: [{ required: true, message: '用户姓名不能为空', trigger: 'blur' }],
+        email: [{ required: true, message: '邮箱不能为空', trigger: 'blur' }]
       }
     }
   },
+  created () {
+    this.getUserInfo()
+  },
   methods: {
+    async getUserInfo () {
+      const { data } = await getUserInfo()
+      this.userInfo = data
+    },
     submit () {
-      let _this = this
-      userApi.updateUser(this.userInfo).then(re => {
-        if (re.code === 1) {
-          _this.$message.success(re.message)
-        } else {
-          _this.$message.error(re.message)
-        }
-      })
+      console.log('更新个人信息')
     }
   }
 }

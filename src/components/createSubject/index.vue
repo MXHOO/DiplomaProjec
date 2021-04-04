@@ -42,8 +42,8 @@ import remark from '@/components/createSubject/components/remark.vue'
 import singleChoice from '@/components/createSubject/components/singleChoice.vue'
 import multipleChoice from '@/components/createSubject/components/multipleChoice.vue'
 import stem from '@/components/createSubject/components/stem.vue'
-import { getSubject, setSubject } from './handleSubject.js'
 import { getSubjects, createProblem, saveHomework } from '@/services/createSubject.js'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     singleChoice,
@@ -73,23 +73,28 @@ export default {
   watch: {
     visible: {
       handler: function (val) {
-        this.$refs.showSubjectRef.subjectList = getSubject()
+        if (!val) {
+          this.$refs.showSubjectRef.subjectList = this.getSubjectList
+        }
       }
     }
   },
   created () {
     this.homework_id = this.$route.params.homework_id
     this.getAllSubject()
+    console.log('problem_ids', this.problem_ids)
   },
   computed: {
-    problem_ids () {
-      return [8]
-    }
+    ...mapGetters({
+      'problem_ids': 'subject/getSubjectIds',
+      'getSubjectList': 'subject/getSubjectList'
+    })
   },
   methods: {
     async getAllSubject () {
       const { data } = await getSubjects({ homework_id: this.homework_id })
-      console.log('获取到的课程数据', data)
+      this.$refs.showSubjectRef.subjectList = data.problems
+      this.$store.commit('subject/setSubjectList', data.problems || [])
     },
     async save () {
       await saveHomework({ 'homework_id': this.homework_id, 'problem_ids': this.problem_ids })
@@ -110,8 +115,8 @@ export default {
       }
       switch (this.subjectType) {
         case '单选':
-          if (this.$refs.singleChoiceRef.value.editorList && this.$refs.singleChoiceRef.value.editorList.length > 0) {
-            const result = this.$refs.singleChoiceRef.value.editorList.map((element, index) => {
+          if (this.$refs.singleChoiceRef.editorList && this.$refs.singleChoiceRef.editorList.length > 0) {
+            const result = this.$refs.singleChoiceRef.editorList.map((element, index) => {
               return { key: String.fromCharCode(65 + parseInt(index)), value: element.txt.text() }
             })
             param.content.options = result
@@ -121,8 +126,8 @@ export default {
           break
 
         case '多选':
-          if (this.$refs.multipleChoiceRef.value.editorList && this.$refs.multipleChoiceRef.value.editorList.length > 0) {
-            const result = this.$refs.multipleChoiceRef.value.editorList.map((element, index) => {
+          if (this.$refs.multipleChoiceRef.editorList && this.$refs.multipleChoiceRef.editorList.length > 0) {
+            const result = this.$refs.multipleChoiceRef.editorList.map((element, index) => {
               return { key: String.fromCharCode(65 + parseInt(index)), value: element.txt.text() }
             })
             param.content.options = result
@@ -138,8 +143,10 @@ export default {
           param.problem_type = 4
           break
       }
-      await createProblem(param)
-      setSubject(param)
+      const { data } = await createProblem(param)
+      this.$notify.success('题目创建成功！')
+      param.problem_id = data
+      this.$store.commit('subject/setSubjectList', param)
     },
     replaceFill (html) {
       const temp = html.replace(/【填空】/g, '<input class="fillContent" style="margin: 10px;"/>')
@@ -170,6 +177,7 @@ export default {
         }
         this.subjectType = '填空'
       }
+      this.visible = false
     },
     // 题目类型改变
     selectChange () {
