@@ -20,7 +20,8 @@ const constantRoutes = [
     path: '/login',
     name: 'Login',
     component: () => import('@/views/login/index'),
-    meta: { title: '登录' }
+    meta: { title: '登录' },
+    hidden: true
   },
   {
     path: '/',
@@ -78,13 +79,20 @@ const constantRoutes = [
         path: 'question/list',
         component: () => import('@/views/exam/question/list'),
         name: 'ExamQuestionPageList',
-        meta: { title: '题目列表', noCache: true }
+        meta: { title: '题目列表', noCache: true },
+        hidden: true
       },
       {
         path: 'homework/list',
         name: 'HomeWrokList',
         component: () => import('@/views/createWork/index.vue'),
         meta: { title: '作业列表', noCache: true }
+      },
+      {
+        path: 'homework/publisedList',
+        component: () => import('@/views/publishedHomework/index'),
+        name: 'publishedHomework',
+        meta: { title: '已发布作业', noCache: true }
       },
       {
         path: 'homework/correct',
@@ -96,19 +104,22 @@ const constantRoutes = [
         path: 'question/edit/singleChoice',
         component: () => import('@/views/exam/question/edit/single-choice'),
         name: 'singleChoicePage',
-        meta: { title: '单选题编辑', noCache: true, activeMenu: '/exam/question/list' }
+        meta: { title: '单选题编辑', noCache: true, activeMenu: '/exam/question/list' },
+        hidden: true
       },
       {
         path: 'question/edit/multipleChoice',
         component: () => import('@/views/exam/question/edit/multiple-choice'),
         name: 'multipleChoicePage',
-        meta: { title: '多选题编辑', noCache: true, activeMenu: '/exam/question/list' }
+        meta: { title: '多选题编辑', noCache: true, activeMenu: '/exam/question/list' },
+        hidden: true
       },
       {
         path: 'question/edit/trueFalse',
         component: () => import('@/views/exam/question/edit/true-false'),
         name: 'trueFalsePage',
-        meta: { title: '判断题编辑', noCache: true, activeMenu: '/exam/question/list' }
+        meta: { title: '判断题编辑', noCache: true, activeMenu: '/exam/question/list' },
+        hidden: true
       },
       {
         path: 'question/edit/gapFilling',
@@ -121,7 +132,8 @@ const constantRoutes = [
         path: 'question/edit/shortAnswer',
         component: () => import('@/views/exam/question/edit/short-answer'),
         name: 'shortAnswerPage',
-        meta: { title: '简答题编辑', noCache: true, activeMenu: '/exam/question/list' }
+        meta: { title: '简答题编辑', noCache: true, activeMenu: '/exam/question/list' },
+        hidden: true
       }
     ]
   },

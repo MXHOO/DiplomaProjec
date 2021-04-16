@@ -57,7 +57,7 @@
 </template>
 <script>
 import homeWork from '@/components/homework/index.vue'
-import { createWork, getHomeWorList } from '@/services/createWork.js'
+import { createWork, getHomeWorList, deleteHomework } from '@/services/createWork.js'
 export default {
   components: {
     homeWork
@@ -114,9 +114,8 @@ export default {
       }
     }
   },
-  async created () {
-    const { data } = await getHomeWorList(this.searchContent)
-    this.list = data.list || []
+  created () {
+    this.getSitesList()
   },
   methods: {
     showModal () {
@@ -124,6 +123,10 @@ export default {
     },
     cancelModal () {
       this.visible = false
+    },
+    async getSitesList () {
+      const { data } = await getHomeWorList(this.searchContent)
+      this.list = data.list || []
     },
     async handleOk () {
       const { data } = await createWork(this.work)
@@ -149,8 +152,12 @@ export default {
       this.searchContent.page_size = size
       this.getSitesList()
     },
-    handlerDeleteHomework () {
-      // console.log('删除作业')
+    async handlerDeleteHomework (homeworkID) {
+      await deleteHomework({ 'homework_id': homeworkID })
+      this.$notify.success('作业删除成功！')
+      this.searchContent.current_page = 1
+      this.searchContent.page_size = 10
+      this.getSitesList()
     },
     saveHomework () {
       // console.log('保存作业')

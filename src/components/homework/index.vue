@@ -40,10 +40,10 @@
     <!-- 编辑作业 -->
     <el-dialog title="编辑作业" :visible="editVisible" @cancel="clearValid">
       <el-form :model="form" :label-col="{ span: 4 }" ref="form" :wrapper-col="{ span: 19 }" :rules="rules">
-        <el-form-item label="作业名称" prop="title">
+        <el-form-item label="作业名称" prop="homework_name">
           <el-input v-model.trim="form.homework_name" placeholder="请输入作业名称" />
         </el-form-item>
-        <el-form-item label="作业描述" prop="description">
+        <el-form-item label="作业描述" prop="homework_notice">
           <el-input v-model.trim="form.homework_notice" placeholder="请输入作业描述"></el-input>
         </el-form-item>
       </el-form>
@@ -92,7 +92,7 @@ export default {
     confirmModal () {
       this.$refs.form.validate((valid) => {
         if (valid) {
-          this.$emit('saveSite', this.form)
+          this.$emit('saveHomeWork', this.form)
           this.clearValid()
         }
       })

@@ -15,3 +15,10 @@ export function createWork (param = {}) {
 export function getHomeWorList (params = {}) {
   return get('/homework_library/homework_list', params)
 }
+
+/**
+ * 删除作业
+ */
+export function deleteHomework (params = {}) {
+  return post('/homework_library/delete_homework', params)
+}
