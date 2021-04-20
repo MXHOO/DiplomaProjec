@@ -47,7 +47,7 @@ export default {
     },
     logout () {
       let _this = this
-      sessionStorage.removeItem('token')
+      localStorage.removeItem('token')
       _this.$router.push({ path: '/login' })
     },
     ...mapMutations('user', ['clearLogin'])

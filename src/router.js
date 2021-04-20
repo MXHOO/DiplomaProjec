@@ -158,6 +158,12 @@ const constantRoutes = [
         component: () => import('@/views/task/edit'),
         name: 'TaskEditPage',
         meta: { title: '任务创建', noCache: true }
+      },
+      {
+        path: 'student',
+        component: () => import('@/views/studentList/index.vue'),
+        name: 'stndentList',
+        meta: { title: '学生列表' }
       }
     ]
   },

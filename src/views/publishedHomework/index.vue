@@ -39,9 +39,6 @@
     <el-dialog :visible.sync="analyseVisible">
       <div>数据分析</div>
     </el-dialog>
-    <el-dialog :visible.sync="detailVisible">
-      <div>查看详情</div>
-    </el-dialog>
   </div>
 </template>
 <script>
@@ -62,18 +59,16 @@ export default {
           class_id: 1
         }
       ],
-      analyseVisible: false,
-      detailVisible: false
+      analyseVisible: false
     }
   },
   methods: {
     dataAnalyse (row) {
       this.analyseVisible = true
-      console.log('数据分析', row)
     },
     // 查看班级对应学生
     detail (row) {
-      console.loh('查看详情', row)
+      this.$router.push('/task/student')
     },
     searchHandler () {
       console.log('搜索')

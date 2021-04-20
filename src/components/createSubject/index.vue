@@ -122,6 +122,7 @@ export default {
             param.content.options = result
           }
           param.problem_type = 1
+          param.content.answer = [`${this.$refs.singleChoiceRef.rightAnswer}`]
           this.edit = param.content.options
           break
 
@@ -132,6 +133,7 @@ export default {
             })
             param.content.options = result
           }
+          param.content.answer = this.$refs.multipleChoiceRef.checkedList
           param.problem_type = 2
           break
 
