@@ -71,7 +71,7 @@ export default {
       this.$router.push('/task/student')
     },
     searchHandler () {
-      console.log('搜索')
+      // console.log('搜索')
     }
   }
 }

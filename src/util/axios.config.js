@@ -9,7 +9,7 @@ const service = axios.create({
 })
 
 service.interceptors.request.use(config => {
-  console.log('config', config)
+  // console.log('config', config)
   if (!config.headers.token && !window.localStorage.getItem('token')) {
     setTimeout(() => { router.push({ path: '/login' }) })
   } else {
