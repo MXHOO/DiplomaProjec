@@ -1,7 +1,8 @@
 <template>
   <div>
     <el-button type="primary" @click="showModal" style="margin: 20px;" size="small">创建题目</el-button>
-    <el-button type="success" @click="save" style="margin: 20px 0;" size="small" v-if="problem_ids.length > 0">保存作业
+    <!-- v-if="problem_ids.length > 0" -->
+    <el-button type="success" @click="save" style="margin: 20px 0;" size="small">保存作业
     </el-button>
     <div id="edit" v-html="edit"></div>
     <show-subject ref="showSubjectRef"></show-subject>
@@ -133,7 +134,7 @@ export default {
               return { key: String.fromCharCode(65 + parseInt(index)), value: element.txt.text() }
             })
             param.content.options = result
-            console.log('多选', result)
+            // console.log('多选', result)
           }
           param.content.options_rules = 0
           param.content.half_score = 5
