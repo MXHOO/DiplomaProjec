@@ -1,7 +1,8 @@
 <template>
   <div>
     <el-button type="primary" @click="showModal" style="margin: 20px;" size="small">创建题目</el-button>
-    <el-button type="success" @click="save" style="margin: 20px 0;" size="small" v-if="problem_ids.length > 0">保存作业</el-button>
+    <el-button type="success" @click="save" style="margin: 20px 0;" size="small" v-if="problem_ids.length > 0">保存作业
+    </el-button>
     <div id="edit" v-html="edit"></div>
     <show-subject ref="showSubjectRef"></show-subject>
     <el-dialog :visible="visible" title="创建题目" @close="cancelModal" width="800px">
@@ -132,19 +133,33 @@ export default {
               return { key: String.fromCharCode(65 + parseInt(index)), value: element.txt.text() }
             })
             param.content.options = result
+            console.log('多选', result)
           }
-          param.content.answer = this.$refs.multipleChoiceRef.checkedList
+          param.content.options_rules = 0
+          param.content.half_score = 5
+          param.content.answer = this.$refs.multipleChoiceRef.changeResult
           param.problem_type = 2
           break
 
         case '填空':
           param.problem_type = 3
+          param.content.blanks = [
+            {
+              case_sensitive: false,
+              fuzzy_match: true,
+              answers: [
+                'aada'
+              ],
+              score: 1
+            }
+          ]
           break
 
         case '主观':
           param.problem_type = 4
           break
       }
+      // eslint-disable-next-line no-unused-vars
       const { data } = await createProblem(param)
       this.$notify.success('题目创建成功！')
       param.problem_id = data

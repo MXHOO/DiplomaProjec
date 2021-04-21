@@ -19,7 +19,13 @@ export default {
     return {
       optionList: [],
       checkedList: [],
-      result: {}
+      result: {},
+      editorList: []
+    }
+  },
+  computed: {
+    changeResult () {
+      return this.checkedList.map(item => String.fromCharCode(parseInt(item) + 65))
     }
   },
   methods: {
