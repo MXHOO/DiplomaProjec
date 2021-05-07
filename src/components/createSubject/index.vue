@@ -2,7 +2,7 @@
   <div>
     <el-button type="primary" @click="showModal" style="margin: 20px;" size="small">创建题目</el-button>
     <!-- v-if="problem_ids.length > 0" -->
-    <el-button type="success" @click="save" style="margin: 20px 0;" size="small">保存作业
+    <el-button type="danger" @click="save" style="margin: 20px 0;" size="small">保存作业
     </el-button>
     <div id="edit" v-html="edit"></div>
     <show-subject ref="showSubjectRef"></show-subject>

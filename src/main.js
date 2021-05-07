@@ -14,7 +14,7 @@ import VueClipboard from 'vue-clipboard2'
 
 Vue.use(VueClipboard)
 Vue.use(Element, {
-  size: 'medium' // set element-ui default size
+  size: 'small' // set element-ui default size
 })
 
 Vue.config.productionTip = false

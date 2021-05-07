@@ -30,9 +30,21 @@ const constantRoutes = [
     children: [
       {
         path: 'dashboard',
-        component: () => import('@/views/dashboard/index'),
+        component: () => import('@/views/home/index'),
         name: 'Dashboard',
         meta: { title: '主页', icon: 'home', affix: true }
+      }
+    ]
+  },
+  {
+    path: '/data_total',
+    component: Layout,
+    children: [
+      {
+        path: 'data_total',
+        component: () => import('@/views/dashboard/index'),
+        name: 'DataTotal',
+        meta: { title: '数据统计', icon: 'home' }
       }
     ]
   },
@@ -186,6 +198,30 @@ const constantRoutes = [
     ]
   },
   {
+    path: '/person',
+    component: Layout,
+    name: 'Person',
+    meta: {
+      title: '成员管理',
+      icon: 'answer'
+    },
+    alwaysShow: true,
+    children: [
+      {
+        path: 'student',
+        component: () => import('@/views/answer/list'),
+        name: 'AnswerPageList',
+        meta: { title: '学生管理', noCache: true }
+      },
+      {
+        path: 'teacher',
+        component: () => import('@/views/answer/list'),
+        name: 'AnswerPageList',
+        meta: { title: '老师管理', noCache: true }
+      }
+    ]
+  },
+  {
     path: '/message',
     component: Layout,
     name: 'MessagePage',
@@ -212,7 +248,9 @@ const constantRoutes = [
   {
     path: '/profile',
     component: Layout,
-    hidden: true,
+    meta: {
+      title: '个人信息'
+    },
     children: [
       {
         path: 'index',

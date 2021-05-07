@@ -7,17 +7,11 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
-          <span>{{userName}}</span>
+          <span>{{userInfo.user_name}}</span>
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown">
-          <router-link to="/profile/index">
-            <el-dropdown-item>个人信息</el-dropdown-item>
-          </router-link>
-          <router-link to="/">
-            <el-dropdown-item>主页</el-dropdown-item>
-          </router-link>
-          <el-dropdown-item  @click.native="logout"  divided>退出</el-dropdown-item>
+          <el-dropdown-item  @click.native="logout">退出</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
@@ -25,7 +19,8 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { getUserInfo } from '@/services/userInfo.js'
+import { mapGetters } from 'vuex'
 // import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 
@@ -34,14 +29,23 @@ export default {
     // Breadcrumb,
     Hamburger
   },
+  created () {
+    this.getUserInfo()
+  },
   computed: {
     ...mapGetters([
       'sidebar',
       'device',
-      'userName'
+      'userInfo'
     ])
   },
   methods: {
+    async getUserInfo () {
+      if (!this.userInfo) {
+        const { data } = await getUserInfo()
+        this.$store.commit('user/setUserInfo', data)
+      }
+    },
     toggleSideBar () {
       this.$store.dispatch('app/toggleSideBar')
     },
@@ -49,8 +53,7 @@ export default {
       let _this = this
       localStorage.removeItem('token')
       _this.$router.push({ path: '/login' })
-    },
-    ...mapMutations('user', ['clearLogin'])
+    }
   }
 }
 </script>
