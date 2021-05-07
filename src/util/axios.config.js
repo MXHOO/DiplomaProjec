@@ -25,10 +25,12 @@ service.interceptors.response.use(response => {
   const { data } = response
   if (data.code === 0) {
     return Promise.resolve(data)
-  } else if (data.code === 1003) {
+  } else if (data.code === 1003 || data.code === 1003) {
     vue.prototype.$message.error(data.msg)
-    router.push({ path: '/login' })
-    localStorage.removeItem('token')
+    setTimeout(_ => {
+      router.push({ path: '/login' })
+      localStorage.removeItem('token')
+    })
     return Promise.reject(data)
   } else {
     vue.prototype.$message.error(data.msg)
