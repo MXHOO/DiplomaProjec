@@ -25,7 +25,7 @@ service.interceptors.response.use(response => {
   const { data } = response
   if (data.code === 0) {
     return Promise.resolve(data)
-  } else if (data.code === 1003 || data.code === 1003) {
+  } else if (data.code === 1003 || data.code === 1002) {
     vue.prototype.$message.error(data.msg)
     setTimeout(_ => {
       router.push({ path: '/login' })
