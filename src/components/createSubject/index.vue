@@ -24,7 +24,7 @@
           <multipleChoice ref="multipleChoiceRef" v-if="subjectType === '多选'"></multipleChoice>
         </el-form-item>
         <el-form-item label="备注">
-          <remark></remark>
+          <remark ref="remark"></remark>
         </el-form-item>
         <el-form-item label="分值">
           <el-input-number v-model="score" :min="1" :max="10" />
@@ -73,13 +73,13 @@ export default {
     }
   },
   watch: {
-    visible: {
-      handler: function (val) {
-        if (!val) {
-          this.$refs.showSubjectRef.subjectList = this.getSubjectList
-        }
-      }
-    }
+    // visible: {
+    //   handler: function (val) {
+    //     if (!val) {
+    //       this.$refs.showSubjectRef.subjectList = this.getSubjectList
+    //     }
+    //   }
+    // }
   },
   created () {
     this.homework_id = this.$route.params.homework_id
@@ -101,7 +101,6 @@ export default {
     async save () {
       await saveHomework({ 'homework_id': this.homework_id, 'problem_ids': this.problem_ids })
       this.$notify.success('作业保存成功！')
-      this.getAllSubject()
     },
     showModal () {
       this.visible = true
@@ -111,9 +110,11 @@ export default {
         content: {
           score: this.score,
           body: this.$refs.stemRef.content.html,
-          has_remark: false,
-          remark: '111'
+          has_remark: this.$refs.remark.checked
         }
+      }
+      if (this.$refs.remark.checked) {
+        param.content.remark = this.$refs.remark.editor.txt.text()
       }
       switch (this.subjectType) {
         case '单选':
@@ -124,7 +125,7 @@ export default {
             param.content.options = result
           }
           param.problem_type = 1
-          param.content.answer = [`${this.$refs.singleChoiceRef.rightAnswer}`]
+          param.content.answer = [`${String.fromCharCode(65 + parseInt(this.$refs.singleChoiceRef.rightAnswer))}`]
           this.edit = param.content.options
           break
 

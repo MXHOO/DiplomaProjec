@@ -1,11 +1,13 @@
 <template>
   <div>
     <el-button type="primary" @click="addOption">增加选项</el-button>
-    <el-checkbox-group v-model="checkedList">
-      <el-checkbox class="radio" v-for="(item, index) in optionList" :value="index" :label="index" :key="item.key">
-        <span class="title">选项{{String.fromCharCode(65 + parseInt(index))}}</span>
-        <div  class="option markdown" :id="'option_' + index"></div>
-        <div class="minus"><i class="el-icon-minus" @click="removeOption(item)"/></div>
+    <el-checkbox-group v-model="checkedList" style="width: 100%">>
+      <el-checkbox v-for="(item, index) in optionList" :value="index" :label="index" :key="item.key" style="width: 100%">
+        <div class="check">
+          <span class="title">选项{{String.fromCharCode(65 + parseInt(index))}}</span>
+          <div class="option markdown" :id="'option_' + index"></div>
+          <div class="minus"><i class="el-icon-remove-outline" @click="removeOption(item)" /></div>
+        </div>
       </el-checkbox>
     </el-checkbox-group>
   </div>
@@ -47,18 +49,21 @@ export default {
 }
 </script>
 <style scoped>
-.radio {
-  display: block;
-  position: relative;
+.check {
+  padding-top: 15px;
+  display: flex;
+  width: 600px;
 }
-.title .minus .markdown{
-  position: absolute;
-}
-.title {
+
+.minus {
+  font-size: 20px;
+  padding-left: 10px;
   width: 30px;
 }
+.title {
+  width: 50px;
+}
 .markdown {
-  top: 0;
-  left: 30px;
+  flex: 1;
 }
 </style>

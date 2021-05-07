@@ -1,18 +1,21 @@
 <template>
- <div>
-    <div>
-    <el-button type="primary" @click="addOption" size="small">增加选项</el-button>
-  </div>
   <div>
-    <el-radio-group v-model="rightAnswer" style="width: 100%;">
-      <el-radio class="radio" v-for="(item, index) in optionList" :value="index" :label="index" :key="item.key" @change="changeRadio">
-        <div class="title">选项{{String.fromCharCode(65 + parseInt(index))}}</div>
-        <div class="markdown" :id="'option_' + index"></div>
-        <div class="minus"><i class="el-icon-remove-outline" @click="removeOption(item)"></i></div>
-      </el-radio>
-    </el-radio-group>
+    <div>
+      <el-button type="primary" @click="addOption" size="small">增加选项</el-button>
+    </div>
+    <div>
+      <el-radio-group v-model="rightAnswer" style="width: 100%;">
+        <el-radio v-for="(item, index) in optionList" :value="index" :label="index" :key="item.key"
+          @change="changeRadio" style="width: 100%; margin-top: 10px;" >
+          <div class="radio">
+            <span class="title">选项{{String.fromCharCode(65 + parseInt(index))}}</span>
+            <div class="markdown" :id="'option_' + index"></div>
+            <div class="minus"><i class="el-icon-remove-outline" @click="removeOption(item)"></i></div>
+          </div>
+        </el-radio>
+      </el-radio-group>
+    </div>
   </div>
- </div>
 </template>
 <script>
 import 'highlight.js/styles/github.css'
@@ -55,14 +58,19 @@ export default {
 }
 </script>
 <style scoped>
+el-radio__input {
+  display: flex;
+}
 .radio {
-  padding-top: 15px;
   display: flex;
 }
 .minus {
+  font-size: 20px;
+  padding-left: 10px;
   width: 50px;
 }
 .title {
+  padding-top: 5px;
   padding-bottom: 15px;
   width: 50px;
 }

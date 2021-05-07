@@ -12,7 +12,8 @@ export default {
   data () {
     return {
       editor: null,
-      checked: false
+      checked: false,
+      content: ''
     }
   },
   beforeDestroy () {
