@@ -1,6 +1,7 @@
 <template>
-  <div>
+  <div style="padding: 20px;">
     <el-form>
+      <el-button type="primary">提交作业</el-button>
       <el-form-item v-for="(item, index) in subjectList" :key="index" :label="index + 1 + ''">
         <span v-if="item && (item.problem_type === 1 || item.problem_type === 2 || item.problem_type === 4)" v-html="item.content.body"></span>
         <span v-if="item.problem_type === 3" v-html="replaceFill(item.content.body)"></span>
@@ -26,57 +27,39 @@
         </div>
 
         <div v-if="item && item.problem_type === 4"/>
-        <div class="delete"><i class="el-icon-remove-outline" @click="deleteSubject(item.problem_id, index+ 1)"></i></div>
       </el-form-item>
     </el-form>
   </div>
 </template>
 <script>
+import { getSubjects } from '@/services/createSubject.js'
 export default {
   data () {
     return {
-      subjectList: [],
-      check: [],
-      radio: ''
+      answer: [],
+      subjectList: []
     }
   },
-  computed: {
-    rightAnswer () {
-      return ''
-    }
+  created () {
+    this.getList()
   },
   methods: {
-    answerList () {
-      return this.subjectList.length.fill(null)
-    },
     replaceFill (html) {
       const temp = html.replace(/【填空】/g, '<input class="fillContent" style="margin: 10px;"/>')
       return temp
     },
-    deleteSubject (id, index) {
-      this.$confirm(`确认移除改题目 ${index} ？`, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$store.commit('subject/deleteSubject', id)
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
-        })
-      })
+    // 获取作业列表
+    async getList () {
+      const { data } = await getSubjects({ homework_id: 15 })
+      console.log('走了吗')
+      this.subjectList = data.problems || []
+      const problemList = data.problems || []
+      this.answer.push({ value: '' })
+      console.log(problemList.lenght)
+    },
+    initAnswer () {
+
     }
   }
 }
 </script>
-<style scoped>
-p {
-  margin: 0;
-  padding: 0;
-}
-</style>

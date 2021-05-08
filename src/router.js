@@ -149,54 +149,54 @@ const constantRoutes = [
       }
     ]
   },
-  {
-    path: '/task',
-    component: Layout,
-    name: 'TaskPage',
-    meta: {
-      title: '任务管理',
-      icon: 'task'
-    },
-    alwaysShow: true,
-    children: [
-      {
-        path: 'list',
-        component: () => import('@/views/task/list'),
-        name: 'TaskListPage',
-        meta: { title: '任务列表', noCache: true }
-      },
-      {
-        path: 'edit',
-        component: () => import('@/views/task/edit'),
-        name: 'TaskEditPage',
-        meta: { title: '任务创建', noCache: true }
-      },
-      {
-        path: 'student',
-        component: () => import('@/views/studentList/index.vue'),
-        name: 'stndentList',
-        meta: { title: '学生列表' }
-      }
-    ]
-  },
-  {
-    path: '/answer',
-    component: Layout,
-    name: 'AnswerPage',
-    meta: {
-      title: '成绩管理',
-      icon: 'answer'
-    },
-    alwaysShow: true,
-    children: [
-      {
-        path: 'list',
-        component: () => import('@/views/answer/list'),
-        name: 'AnswerPageList',
-        meta: { title: '答卷列表', noCache: true }
-      }
-    ]
-  },
+  // {
+  //   path: '/task',
+  //   component: Layout,
+  //   name: 'TaskPage',
+  //   meta: {
+  //     title: '任务管理',
+  //     icon: 'task'
+  //   },
+  //   alwaysShow: true,
+  //   children: [
+  //     {
+  //       path: 'list',
+  //       component: () => import('@/views/task/list'),
+  //       name: 'TaskListPage',
+  //       meta: { title: '任务列表', noCache: true }
+  //     },
+  //     {
+  //       path: 'edit',
+  //       component: () => import('@/views/task/edit'),
+  //       name: 'TaskEditPage',
+  //       meta: { title: '任务创建', noCache: true }
+  //     },
+  //     {
+  //       path: 'student',
+  //       component: () => import('@/views/studentList/index.vue'),
+  //       name: 'stndentList',
+  //       meta: { title: '学生列表' }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/answer',
+  //   component: Layout,
+  //   name: 'AnswerPage',
+  //   meta: {
+  //     title: '成绩管理',
+  //     icon: 'answer'
+  //   },
+  //   alwaysShow: true,
+  //   children: [
+  //     {
+  //       path: 'list',
+  //       component: () => import('@/views/answer/list'),
+  //       name: 'AnswerPageList',
+  //       meta: { title: '答卷列表', noCache: true }
+  //     }
+  //   ]
+  // },
   {
     path: '/person',
     component: Layout,
@@ -209,15 +209,27 @@ const constantRoutes = [
     children: [
       {
         path: 'student',
-        component: () => import('@/views/answer/list'),
+        component: () => import('@/views/personManage/student/index'),
         name: 'AnswerPageList',
         meta: { title: '学生管理', noCache: true }
       },
       {
         path: 'teacher',
-        component: () => import('@/views/answer/list'),
+        component: () => import('@/views/personManage/teacher/index'),
         name: 'AnswerPageList',
         meta: { title: '老师管理', noCache: true }
+      }
+    ]
+  },
+  {
+    path: '/my_work',
+    component: Layout,
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/myWork/index'),
+        name: 'MyWork',
+        meta: { title: '我的作业', icon: 'home' }
       }
     ]
   },
