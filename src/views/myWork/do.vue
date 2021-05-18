@@ -1,6 +1,5 @@
 <template>
   <div style="padding: 20px;">
-    <el-form>
       <div>作业题目</div>
       <el-button type="primary">提交作业</el-button>
       <el-form>
@@ -12,7 +11,6 @@
                 :answer="answer.answerItems[questionItem.itemOrder-1]" />
             </el-form-item>
           </el-card>
-      </el-form>
 
       <!-- <el-form-item v-for="(item, index) in subjectList" :key="index" :label="index + 1 + ''">
         <span v-if="item && (item.problem_type === 1 || item.problem_type === 2 || item.problem_type === 4)" v-html="item.content.body"></span>

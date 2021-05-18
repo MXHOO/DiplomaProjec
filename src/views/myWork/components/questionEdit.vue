@@ -3,7 +3,7 @@
     <div v-if="qType==1">
       <div class="q-title" v-html="question.body"/>
       <div class="q-content">
-        <el-radio-group v-model="answer.content" @change="answer.completed = true" >
+        <el-radio-group v-model="answer.content" @change="change" >
           <el-radio  v-for="item in question.options"  :key="item.key"  :label="item.key" >
             <span class="question-prefix">{{item.key}}.</span>
             <span v-html="item.value" class="q-item-span-content"></span>
@@ -58,16 +58,18 @@ export default {
         return { id: null, content: '', contentArray: [] }
       }
     },
-    // qLoading: {
-    //   type: Boolean,
-    //   default: false
-    // },
     qType: {
       type: Number,
       default: 0
     }
   },
+  created () {
+    console.log('初始化答案', this.answer)
+  },
   methods: {
+    change () {
+      console.log('切换答案', this.answer)
+    }
   }
 }
 </script>

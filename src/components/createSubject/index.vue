@@ -1,11 +1,13 @@
 <template>
   <div>
+    <el-row>
+      <h1>{{$route.query.name}}</h1>
+    </el-row>
     <el-button type="primary" @click="showModal" style="margin: 20px;" size="small">创建题目</el-button>
     <!-- v-if="problem_ids.length > 0" -->
     <el-button type="danger" @click="save" style="margin: 20px 0;" size="small">保存作业
     </el-button>
-    <div id="edit" v-html="edit"></div>
-    <show-subject ref="showSubjectRef"></show-subject>
+    <show-subject ref="showSubjectRef" @delete="deleteSubject"></show-subject>
     <el-dialog :visible="visible" title="创建题目" @close="cancelModal" width="800px">
       <el-form label-width="100px">
         <el-form-item label="题目类型">
@@ -63,6 +65,7 @@ export default {
   data () {
     return {
       homework_id: '',
+      homework_name: '',
       editorOption: {},
       content: '',
       score: '',
@@ -96,11 +99,33 @@ export default {
     async getAllSubject () {
       const { data } = await getSubjects({ homework_id: this.homework_id })
       this.$refs.showSubjectRef.subjectList = data.problems
-      this.$store.commit('subject/setSubjectList', data.problems || [])
     },
     async save () {
-      await saveHomework({ 'homework_id': this.homework_id, 'problem_ids': this.problem_ids })
+      const ids = this.$refs.showSubjectRef.subjectList.map(item => item.problem_id)
+      await saveHomework({ 'homework_id': this.homework_id, 'problem_ids': ids })
       this.$notify.success('作业保存成功！')
+      this.getAllSubject()
+    },
+    deleteSubject (id) {
+      let flag = false
+      let i = -1
+      this.$refs.showSubjectRef.subjectList.forEach((item, index) => {
+        if (item.problem_id === id) {
+          flag = true
+          i = index
+        }
+      })
+
+      if (flag) {
+        this.$refs.showSubjectRef.subjectList.splice(i, 1)
+        this.$set(this.$refs.showSubjectRef.subjectList)
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
+      } else {
+        this.$message.error('删除失败！')
+      }
     },
     showModal () {
       this.visible = true
@@ -165,6 +190,7 @@ export default {
       const { data } = await createProblem(param)
       this.$notify.success('题目创建成功！')
       param.problem_id = data
+      this.$refs.showSubjectRef.subjectList.push(param)
       this.$store.commit('subject/setSubjectList', param)
     },
     replaceFill (html) {

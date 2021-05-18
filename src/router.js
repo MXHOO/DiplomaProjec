@@ -7,6 +7,7 @@ Vue.use(Router)
 const constantRoutes = [
   {
     path: '/redirect',
+    role: ['teacher', 'admin', 'student'],
     component: Layout,
     hidden: true,
     children: [
@@ -19,12 +20,14 @@ const constantRoutes = [
   {
     path: '/login',
     name: 'Login',
+    role: ['teacher', 'admin', 'student'],
     component: () => import('@/views/login/index'),
     meta: { title: '登录' },
     hidden: true
   },
   {
     path: '/',
+    role: ['teacher', 'admin', 'student'],
     component: Layout,
     redirect: '/dashboard',
     children: [
@@ -46,24 +49,6 @@ const constantRoutes = [
         component: () => import('@/views/dashboard/index'),
         name: 'DataTotal',
         meta: { title: '数据统计', icon: 'home' }
-      }
-    ]
-  },
-  {
-    path: '/user',
-    component: Layout,
-    name: 'UserPage',
-    role: ['admin'],
-    meta: {
-      title: '用户管理',
-      icon: 'users'
-    },
-    children: [
-      {
-        path: 'student/list',
-        component: () => import('@/views/user/student/list'),
-        name: 'UserStudentPageList',
-        meta: { title: '学生列表', noCache: true }
       }
     ]
   },
@@ -232,6 +217,7 @@ const constantRoutes = [
     children: [
       {
         path: 'list',
+        role: ['student'],
         component: () => import('@/views/myWork/index'),
         name: 'MyWork',
         meta: { title: '我的作业', icon: 'home' }
@@ -242,6 +228,7 @@ const constantRoutes = [
     path: '/message',
     component: Layout,
     name: 'MessagePage',
+    role: ['teacher', 'admin', 'student'],
     meta: {
       title: '消息中心',
       icon: 'message'
@@ -265,6 +252,7 @@ const constantRoutes = [
   {
     path: '/profile',
     component: Layout,
+    role: ['teacher', 'admin', 'student'],
     meta: {
       title: '个人信息'
     },
@@ -279,6 +267,7 @@ const constantRoutes = [
   },
   {
     path: '/edit/:homework_id',
+    role: ['teacher'],
     component: () => import('@/components/createSubject/index.vue'),
     name: 'CreateProject',
     meta: { title: '题目创建' },
@@ -286,6 +275,7 @@ const constantRoutes = [
   },
   { path: '*',
     hidden: true,
+    role: ['teacher', 'admin', 'student'],
     component: () => import('@/views/error-page/404'),
     meta: { title: '404', noCache: true }
   }

@@ -104,14 +104,19 @@ export default {
       this.$message.error('内容复制失败,请重新复制！', 0.5)
     },
     editSiteContent () {
-      this.$router.push(`/edit/${this.siteDetail.homework_id}`)
+      this.$router.push({
+        path: `/edit/${this.siteDetail.homework_id}`,
+        query: {
+          name: this.siteDetail.homework_name
+        }
+      })
     },
     // 删除作业
     deleteHomework () {
       const self = this
       this.$confirm('确认删除该作业吗？', '提示').then(_ => {
         self.$emit('deleteHomework', self.siteDetail.homework_id)
-      }).catch(_ => {})
+      }).catch(_ => { })
     }
   }
 }
@@ -131,12 +136,12 @@ export default {
     justify-content: center;
 
     img {
-    width: 50%;
-    height: 80%;
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-    margin: 10px 0;
-  }
+      width: 50%;
+      height: 80%;
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
+      margin: 10px 0;
+    }
   }
 
   &__describe {

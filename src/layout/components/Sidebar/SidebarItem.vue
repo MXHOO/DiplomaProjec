@@ -1,5 +1,6 @@
 <template>
-  <div v-if="!item.hidden && isShow()" class="menu-wrapper">
+ <!-- && isShow(item) -->
+  <div v-if="!item.hidden" class="menu-wrapper">
     <template
       v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!item.alwaysShow">
       <app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path)">
@@ -55,28 +56,28 @@ export default {
     // To fix https://github.com/PanJiaChen/vue-admin-template/issues/237
     // TODO: refactor with render function
     this.onlyOneChild = null
-    return {}
+    return {
+    }
   },
   methods: {
     test () {
       console.log('测试一下')
     },
-    async isShow () {
-      console.log('获取用户信息', this.userInfo)
-      if (this.item.role) {
+    isShow (item) {
+      if (item.role) {
         if (this.userInfo) {
-          this.item.role.forEach(element => {
-            if (this.userInfo.role_names.indexOf(element) >= 0) {
-              return true
-            } else {
-              return false
-            }
+          console.log('有用户信息')
+          item.role.forEach(element => {
+            console.log(this.userInfo.role_names.includes(element), element)
+            return this.userInfo.role_names.includes(element)
           })
         } else {
           this.getUserInfo()
+          return false
         }
       } else {
-        return true
+        console.log('啥都没有')
+        return false
       }
     },
     async getUserInfo () {
