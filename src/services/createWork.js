@@ -22,3 +22,10 @@ export function getHomeWorList (params = {}) {
 export function deleteHomework (params = {}) {
   return post('/homework_library/delete_homework', params)
 }
+
+/**
+ * 发布作业
+ */
+export function publishedHomework (params = {}) {
+  return post('/publish/homework', params)
+}

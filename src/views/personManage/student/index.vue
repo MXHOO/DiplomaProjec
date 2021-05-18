@@ -9,8 +9,8 @@
       <el-table-column label="学生班级" prop="classes"></el-table-column>
       <el-table-column label="编辑">
         <template slot-scope="scope">
-          <el-button type="primary" @click="edit(scope)">编辑</el-button>
-          <el-button type="warning" @click="deleteStudent(scope)">删除</el-button>
+          <el-button type="primary" @click="edit(scope.row)">编辑</el-button>
+          <el-button type="warning" @click="deleteStudent(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -72,6 +72,15 @@ export default {
     addStudent () {
       this.$message.success('添加成功！')
       this.visible = false
+    },
+    deleteStudent (item) {
+      this.$confirm(`确认删除学生${item.name}`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(_ => {
+        this.$message.success('删除成功')
+      })
     }
   }
 }

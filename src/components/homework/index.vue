@@ -20,6 +20,11 @@
         </span>
       </div>
       <div>
+        <span class="operator" @click="publishedVisible=true">
+          <i class="el-icon-position">发布</i>
+        </span>
+      </div>
+      <div>
         <el-dropdown trigger="click">
           <span class="operator">
             更多
@@ -52,6 +57,20 @@
         <el-button @click="clearValid">取消</el-button>
       </template>
     </el-dialog>
+    <el-dialog title="发布作业" :visible.sync="publishedVisible">
+      <el-form :model="publishContent" label-width="100px">
+        <el-form-item label="班级:">
+          <el-select v-model="publishContent.class_id"></el-select>
+        </el-form-item>
+        <el-form-item label="截止时间:">
+          <el-date-picker v-model="publishContent.deadline_time" type="datetime" placeholder="选择日期时间">
+          </el-date-picker>
+        </el-form-item>
+      </el-form>
+      <div slot="footer">
+        <el-button @click="publish">发布</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -76,8 +95,13 @@ export default {
         { label: 'H5', value: 'h5' },
         { label: 'PC', value: 'pc' }
       ],
-      protocol: window.location.protocol
-      // previewUrl: previewWorkUrl
+      protocol: window.location.protocol,
+      publishedVisible: false,
+      publishContent: {
+        homework_id: this.siteDetail.homework_id,
+        class_ids: [],
+        deadline_time: ''
+      }
     }
   },
   methods: {
@@ -110,6 +134,9 @@ export default {
           name: this.siteDetail.homework_name
         }
       })
+    },
+    publish () {
+
     },
     // 删除作业
     deleteHomework () {

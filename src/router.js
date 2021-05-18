@@ -58,16 +58,10 @@ const constantRoutes = [
     name: 'ExamPage',
     role: ['teacher'],
     meta: {
-      title: '卷题管理',
+      title: '作业管理',
       icon: 'exam'
     },
     children: [
-      {
-        path: 'paper/list',
-        component: () => import('@/views/exam/paper/list'),
-        name: 'ExamPaperPageList',
-        meta: { title: '试卷列表', noCache: true }
-      },
       {
         path: 'paper/edit',
         component: () => import('@/views/exam/paper/edit'),
@@ -199,14 +193,20 @@ const constantRoutes = [
       {
         path: 'student',
         component: () => import('@/views/personManage/student/index'),
-        name: 'AnswerPageList',
+        name: 'studentList',
         meta: { title: '学生管理', noCache: true }
       },
       {
         path: 'teacher',
         component: () => import('@/views/personManage/teacher/index'),
-        name: 'AnswerPageList',
+        name: 'teacherList',
         meta: { title: '老师管理', noCache: true }
+      },
+      {
+        path: 'team',
+        component: () => import('@/views/personManage/team/index'),
+        name: 'teamList',
+        meta: { title: '班级管理', noCache: true }
       }
     ]
   },
