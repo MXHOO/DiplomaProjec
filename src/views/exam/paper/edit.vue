@@ -92,7 +92,6 @@
 import { mapGetters, mapState, mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
 import QuestionShow from '../question/components/Show'
-import examPaperApi from '@/api/examPaper'
 import questionApi from '@/api/question'
 
 export default {
@@ -146,42 +145,13 @@ export default {
     }
   },
   created () {
-    let id = this.$route.query.id
     let _this = this
     this.initSubject(function () {
       _this.subjectFilter = _this.subjects
     })
-    if (id && parseInt(id) !== 0) {
-      _this.formLoading = true
-      examPaperApi.select(id).then(re => {
-        _this.form = re.response
-        _this.formLoading = false
-      })
-    }
   },
   methods: {
     submitForm () {
-      let _this = this
-      this.$refs.form.validate((valid) => {
-        if (valid) {
-          this.formLoading = true
-          examPaperApi.edit(this.form).then(re => {
-            if (re.code === 1) {
-              _this.$message.success(re.message)
-              _this.delCurrentView(_this).then(() => {
-                _this.$router.push('/exam/paper/list')
-              })
-            } else {
-              _this.$message.error(re.message)
-              this.formLoading = false
-            }
-          }).catch(e => {
-            this.formLoading = false
-          })
-        } else {
-          return false
-        }
-      })
     },
     addTitle () {
       this.form.titleItems.push({

@@ -1,6 +1,7 @@
 <template>
-  <div v-if="!item.hidden" class="menu-wrapper">
-    <template v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!item.alwaysShow">
+  <div v-if="!item.hidden && isShow()" class="menu-wrapper">
+    <template
+      v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!item.alwaysShow">
       <app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path)">
         <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{'submenu-title-noDropdown':!isNest}">
           <item :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" :title="onlyOneChild.meta.title" />
@@ -12,14 +13,8 @@
       <template slot="title">
         <item v-if="item.meta" :icon="item.meta && item.meta.icon" :title="item.meta.title" />
       </template>
-      <sidebar-item
-        v-for="child in item.children"
-        :key="child.path"
-        :is-nest="true"
-        :item="child"
-        :base-path="resolvePath(child.path)"
-        class="nest-menu"
-      />
+      <sidebar-item v-for="child in item.children" @click="test" :key="child.path" :is-nest="true" :item="child"
+        :base-path="resolvePath(child.path)" class="nest-menu" />
     </el-submenu>
   </div>
 </template>
@@ -30,11 +25,17 @@ import { isExternal } from '@/utils/validate'
 import Item from './Item'
 import AppLink from './Link'
 import FixiOSBug from './FixiOSBug'
-
+import { mapGetters } from 'vuex'
+import { getUserInfo } from '@/services/userInfo.js'
 export default {
   name: 'SidebarItem',
   components: { Item, AppLink },
   mixins: [FixiOSBug],
+  computed: {
+    ...mapGetters([
+      'userInfo'
+    ])
+  },
   props: {
     // route object
     item: {
@@ -57,6 +58,33 @@ export default {
     return {}
   },
   methods: {
+    test () {
+      console.log('测试一下')
+    },
+    async isShow () {
+      console.log('获取用户信息', this.userInfo)
+      if (this.item.role) {
+        if (this.userInfo) {
+          this.item.role.forEach(element => {
+            if (this.userInfo.role_names.indexOf(element) >= 0) {
+              return true
+            } else {
+              return false
+            }
+          })
+        } else {
+          this.getUserInfo()
+        }
+      } else {
+        return true
+      }
+    },
+    async getUserInfo () {
+      if (!this.userInfo) {
+        const { data } = await getUserInfo()
+        this.$store.commit('user/setUserInfo', data)
+      }
+    },
     hasOneShowingChild (children = [], parent) {
       const showingChildren = children.filter(item => {
         if (item.hidden) {

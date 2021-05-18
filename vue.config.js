@@ -8,12 +8,19 @@ const configureWebpack = {
     }
   }
 }
-const url = 'http://39.102.46.213'
+const url = 'http://39.102.46.213/homeworkFeedBack'
 module.exports = {
   publicPath: './',
   devServer: {
     open: true,
     proxy: {
+      '/api/mock': {
+        target: url,
+        changeOrigin: true,
+        pathRewrite: {
+          '/api/mock': ''
+        }
+      },
       '/api': {
         target: url,
         changeOrigin: true,

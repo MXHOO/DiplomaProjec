@@ -41,7 +41,6 @@
 <script>
 import { mapGetters, mapState, mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
-import examPaperApi from '@/api/examPaper'
 
 export default {
   components: { Pagination },
@@ -68,27 +67,6 @@ export default {
     submitForm () {
       this.queryParam.pageIndex = 1
       this.search()
-    },
-    search () {
-      this.listLoading = true
-      examPaperApi.pageList(this.queryParam).then(data => {
-        const re = data.response
-        this.tableData = re.list
-        this.total = re.total
-        this.queryParam.pageIndex = re.pageNum
-        this.listLoading = false
-      })
-    },
-    deletePaper (row) {
-      let _this = this
-      examPaperApi.deletePaper(row.id).then(re => {
-        if (re.code === 1) {
-          _this.search()
-          _this.$message.success(re.message)
-        } else {
-          _this.$message.error(re.message)
-        }
-      })
     },
     levelChange () {
       this.queryParam.subjectId = null

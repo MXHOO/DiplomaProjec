@@ -7,7 +7,7 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
-          <span>{{userInfo.user_name ? userInfo.user_name : '用户名'}}</span>
+          <span>{{ userInfo && userInfo.user_name ? userInfo.user_name : '用户名'}}</span>
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown">

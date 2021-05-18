@@ -61,7 +61,6 @@
 
 <script>
 import taskApi from '@/api/task'
-import examPaperApi from '@/api/examPaper'
 import Pagination from '@/components/Pagination'
 import { mapGetters, mapState, mapActions } from 'vuex'
 
@@ -125,13 +124,6 @@ export default {
     search () {
       this.paperPage.showDialog = true
       this.listLoading = true
-      examPaperApi.taskExamPage(this.paperPage.queryParam).then(data => {
-        const re = data.response
-        this.paperPage.tableData = re.list
-        this.paperPage.total = re.total
-        this.paperPage.queryParam.pageIndex = re.pageNum
-        this.paperPage.listLoading = false
-      })
     },
     handleSelectionChange (val) {
       this.paperPage.multipleSelection = val

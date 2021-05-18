@@ -39,6 +39,7 @@ const constantRoutes = [
   {
     path: '/data_total',
     component: Layout,
+    role: ['teacher', 'admin'],
     children: [
       {
         path: 'data_total',
@@ -52,6 +53,7 @@ const constantRoutes = [
     path: '/user',
     component: Layout,
     name: 'UserPage',
+    role: ['admin'],
     meta: {
       title: '用户管理',
       icon: 'users'
@@ -69,6 +71,7 @@ const constantRoutes = [
     path: '/exam',
     component: Layout,
     name: 'ExamPage',
+    role: ['teacher'],
     meta: {
       title: '卷题管理',
       icon: 'exam'
@@ -201,6 +204,7 @@ const constantRoutes = [
     path: '/person',
     component: Layout,
     name: 'Person',
+    role: ['teacher', 'admin'],
     meta: {
       title: '成员管理',
       icon: 'answer'
@@ -224,6 +228,7 @@ const constantRoutes = [
   {
     path: '/my_work',
     component: Layout,
+    role: ['student'],
     children: [
       {
         path: 'list',

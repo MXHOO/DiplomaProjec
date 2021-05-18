@@ -2,18 +2,16 @@
   <div style="padding: 20px;">
     <el-form>
       <div>作业题目</div>
-      <el-button type="primary" @click="submitForm">提交作业</el-button>
+      <el-button type="primary">提交作业</el-button>
       <el-form>
-        <el-card>
-          <el-card class="exampaper-item-box" v-if="subjectList.length!==0">
-            <el-form-item :key="questionItem.problem_id" :label="index+ 1 +'.'"
-              v-for="(questionItem, index) in subjectList" class="exam-question-item" label-width="50px"
+        <el-card class="exampaper-item-box" v-if="subjectList.length!==0">
+            <el-form-item :key="questionItem.itemOrder" :label="questionItem.itemOrder+'.'"
+              v-for="questionItem in subjectList" class="exam-question-item" label-width="50px"
               :id="'question-'+ questionItem.problem_id">
-              <QuestionEdit :qType="questionItem.problem_type" :question="questionItem.content" />
-              <!-- :answer="answer.answerItems[questionItem.problem_id-1]" -->
+              <QuestionEdit :qType="questionItem.problem_type" :question="content"
+                :answer="answer.answerItems[questionItem.itemOrder-1]" />
             </el-form-item>
           </el-card>
-        </el-card>
       </el-form>
 
       <!-- <el-form-item v-for="(item, index) in subjectList" :key="index" :label="index + 1 + ''">
@@ -76,23 +74,20 @@ export default {
       this.subjectList = data.problems || []
       this.rules = data.rules
       this.homework = data.homework
-      for (let tIndex in this.subjectList) {
-        console.log('for循环', tIndex)
-        let questionArray = this.subjectList[tIndex].questionItems
+      const problemList = data.problems || []
+      this.answer.push({ value: '' })
+      console.log(problemList.lenght)
+    },
+    initAnswer () {
+      this.answer.id = this.form.id
+      let titleItemArray = this.form.titleItems
+      for (let tIndex in titleItemArray) {
+        let questionArray = titleItemArray[tIndex].questionItems
         for (let qIndex in questionArray) {
           let question = questionArray[qIndex]
           this.answer.answerItems.push({ questionId: question.id, content: null, contentArray: [], completed: false, itemOrder: question.itemOrder })
         }
       }
-      // const problemList = data.problems || []
-      // this.answer.push({ value: '' })
-      // console.log(problemList.lenght)
-    },
-    initAnswer () {
-
-    },
-    submitForm () {
-      console.log('答案', this.answer)
     }
   }
 }
