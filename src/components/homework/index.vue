@@ -57,18 +57,20 @@
         <el-button @click="clearValid">取消</el-button>
       </template>
     </el-dialog>
-    <el-dialog title="发布作业" :visible.sync="publishedVisible">
-      <el-form :model="publishContent" label-width="100px">
-        <el-form-item label="班级:">
-          <el-select v-model="publishContent.class_id"></el-select>
+    <el-dialog title="发布作业" :visible.sync="publishedVisible" width="500px">
+      <el-form :model="publishContent" label-width="100px" :rules="publishRule" ref="publishForm">
+        <el-form-item label="班级:" prop="class_id">
+          <el-select v-model="publishContent.class_id" multiple style="width: 300px;">
+            <el-option v-for="item in classList" :key="item.key" :label="item.val" :value="item.val"></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="截止时间:">
-          <el-date-picker v-model="publishContent.deadline_time" type="datetime" placeholder="选择日期时间">
+        <el-form-item label="截止时间:" prop="deadline_time">
+          <el-date-picker v-model="publishContent.deadline_time"  style="width: 300px;" type="datetime" placeholder="选择日期时间">
           </el-date-picker>
         </el-form-item>
       </el-form>
-      <div slot="footer">
-        <el-button @click="publish">发布</el-button>
+      <div slot="footer" style="text-align: center;">
+        <el-button @click="publish" type="primary">发布</el-button>
       </div>
     </el-dialog>
   </div>
@@ -87,9 +89,12 @@ export default {
       previewVisible: false,
       form: {},
       rules: {
-        pageMode: [{ required: true, message: '作业类型不能为空', trigger: 'change' }],
-        title: [{ required: true, message: '作业标题不能为空', trigger: 'blur' }],
-        description: [{ required: true, message: '作业描述不能为空', trigger: 'blur' }]
+        homework_name: [{ required: true, message: '作业标题不能为空', trigger: 'blur' }],
+        homework_notice: [{ required: true, message: '作业描述不能为空', trigger: 'blur' }]
+      },
+      publishRule: {
+        class_id: [{ required: true, message: '发布班级不能为空', trigger: 'change' }],
+        deadline_time: [{ required: true, message: '截至日期必能为空', trigger: 'change' }]
       },
       pageModeList: [
         { label: 'H5', value: 'h5' },
@@ -98,10 +103,15 @@ export default {
       protocol: window.location.protocol,
       publishedVisible: false,
       publishContent: {
-        homework_id: this.siteDetail.homework_id,
-        class_ids: [],
+        class_id: [],
         deadline_time: ''
-      }
+      },
+      classList: [
+        { key: 1, val: '软件1701' },
+        { key: 2, val: '软件1702' },
+        { key: 3, val: '软件1703' },
+        { key: 4, val: '软件1704' }
+      ]
     }
   },
   methods: {
@@ -135,22 +145,34 @@ export default {
         }
       })
     },
-    publish () {
-
-    },
     // 删除作业
     deleteHomework () {
       const self = this
       this.$confirm('确认删除该作业吗？', '提示').then(_ => {
         self.$emit('deleteHomework', self.siteDetail.homework_id)
       }).catch(_ => { })
+    },
+    publish () {
+      this.$refs.publishForm.validate(valid => {
+        if (valid) {
+          const self = this
+          const param = {
+            homework_id: self.siteDetail.homework_id,
+            deadline_time: new Date(this.publishContent.deadline_time).getTime(),
+            class_ids: this.publishContent.class_id.join(',')
+          }
+          this.$confirm(`发布作业${self.siteDetail.homework_id}`, '确认').then(_ => {
+            self.$emit('publishHomework', param)
+          })
+        }
+      })
     }
   }
 }
 </script>
 <style lang="scss" scoped>
 .rc-site {
-  width: 230px;
+  width: 220px;
   font-size: 14px;
   margin: 15px;
   border: #eeeeee 1px solid;

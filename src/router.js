@@ -80,7 +80,7 @@ const constantRoutes = [
         path: 'homework/list',
         name: 'HomeWrokList',
         component: () => import('@/views/createWork/index.vue'),
-        meta: { title: '作业列表', noCache: true }
+        meta: { title: '作业库', noCache: true }
       },
       {
         path: 'homework/publisedList',
@@ -93,6 +93,13 @@ const constantRoutes = [
         name: 'HomeWrokCcorrect',
         component: () => import('@/views/createWork/index.vue'),
         meta: { title: '批改作业', noCache: true }
+      },
+      {
+        path: 'homework/classDetail',
+        component: () => import('@/views/classDetail/index.vue'),
+        name: 'classDetail',
+        hidden: true,
+        meta: { title: '作业班级详情', noCache: true }
       },
       {
         path: 'question/edit/singleChoice',
@@ -213,6 +220,10 @@ const constantRoutes = [
   {
     path: '/my_work',
     component: Layout,
+    meta: {
+      title: '我的作业管理',
+      icon: 'exam'
+    },
     role: ['student'],
     children: [
       {
@@ -221,6 +232,13 @@ const constantRoutes = [
         component: () => import('@/views/myWork/index'),
         name: 'MyWork',
         meta: { title: '我的作业', icon: 'home' }
+      },
+      {
+        path: 'completedWork',
+        role: ['student'],
+        component: () => import('@/views/completedWork/index'),
+        name: 'completedWork',
+        meta: { title: '作业详情', icon: 'home' }
       }
     ]
   },

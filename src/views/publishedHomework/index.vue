@@ -9,7 +9,7 @@
       </el-form-item>
       <el-form-item label="班级">
         <el-select v-model="search.class">
-          <el-option></el-option>
+          <el-option v-for="item in teamList" :key="item.key" :label="item.val" :value="item.val"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -36,12 +36,17 @@
       </el-table-column>
       <el-table-column prop="" label="最后修改时间"></el-table-column>
     </el-table>
-    <el-dialog :visible.sync="analyseVisible">
-      <div>数据分析</div>
+    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="[5, 10, 20]"
+      :current-page.sync="searchContent.current_page" :page-size="searchContent.page_size"
+      layout="sizes, total, prev, pager, next" :total="total">
+    </el-pagination>
+    <el-dialog :visible.sync="analyseVisible" title="数据分析" @opened="showData">
+      <div id="dataSys" style="width: 100%; height: 300px;"></div>
     </el-dialog>
   </div>
 </template>
 <script>
+import { publishedList } from '@/services/published'
 export default {
   data () {
     return {
@@ -51,27 +56,91 @@ export default {
         class: ''
       },
       list: [
-        { homework_id: 1,
-          homework_name: '作业1' }
-      ],
-      classList: [
         {
-          class_id: 1
+          homework_id: 1,
+          homework_name: '作业1'
         }
       ],
-      analyseVisible: false
+      classList: [
+        { class_id: 2 }
+      ],
+      teamList: [
+        {
+          key: 1, val: '软件1701'
+        }
+      ],
+      analyseVisible: false,
+      searchContent: {
+        page_size: 10,
+        current_page: 1
+      },
+      total: 10
     }
   },
+  created () {
+    // this.getList()
+  },
   methods: {
+    async getList () {
+      const { data } = await publishedList(this.searchContent)
+      this.list = data.list || []
+      this.total = data.total
+    },
+    handleSizeChange (page) {
+      this.searchContent.page_size = page
+      this.getList()
+    },
+    handleCurrentChange (current) {
+      this.searchContent.current_page = current
+      this.getList()
+    },
     dataAnalyse (row) {
       this.analyseVisible = true
     },
     // 查看班级对应学生
     detail (row) {
-      this.$router.push('/task/student')
+      this.$router.push('/exam/homework/classDetail')
     },
     searchHandler () {
       // console.log('搜索')
+    },
+    showData () {
+      // eslint-disable-next-line no-undef
+      const pie = echarts.init(document.getElementById('dataSys'))
+      pie.setOption({
+        title: {
+          text: '作业完成度对比',
+          x: 'center'
+        },
+        tooltip: {
+          trigger: 'item',
+          formatter: '111'
+        },
+        legend: {
+          orient: 'vertical',
+          bottom: 'bottom',
+          data: ['已完成', '未完成']
+        },
+        series: [
+          {
+            name: '访问来源',
+            type: 'pie',
+            radius: '55%',
+            center: ['50%', '60%'],
+            data: [
+              { value: 335, name: '已完成' },
+              { value: 310, name: '未完成' }
+            ],
+            itemStyle: {
+              emphasis: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            }
+          }
+        ]
+      })
     }
   }
 }

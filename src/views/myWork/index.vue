@@ -1,20 +1,19 @@
 <template>
   <div style="padding: 20px;">
+    <el-row>
+      <el-col :span="18"><p>作业题目</p></el-col>
+      <el-col :span="6">
+        <el-button type="primary">提交作业</el-button>
+      </el-col>
+    </el-row>
     <el-form>
-      <div>作业题目</div>
-      <el-button type="primary" @click="submitForm">提交作业</el-button>
-      <el-form>
-        <el-card>
-          <el-card class="exampaper-item-box" v-if="subjectList.length!==0">
-            <el-form-item :key="questionItem.problem_id" :label="index+ 1 +'.'"
-              v-for="(questionItem, index) in subjectList" class="exam-question-item" label-width="50px"
-              :id="'question-'+ questionItem.problem_id">
-              <QuestionEdit :qType="questionItem.problem_type" :question="questionItem.content" />
-              <!-- :answer="answer.answerItems[questionItem.problem_id-1]" -->
-            </el-form-item>
-          </el-card>
-        </el-card>
-      </el-form>
+      <el-card class="exampaper-item-box" v-if="subjectList.length!==0">
+        <el-form-item :key="questionItem.problem_id" :label="index+ 1 +'.'" v-for="(questionItem, index) in subjectList"
+          class="exam-question-item" label-width="50px" :id="'question-'+ questionItem.problem_id">
+          <QuestionEdit :qType="questionItem.problem_type" :question="questionItem.content" />
+          <!-- :answer="answer.answerItems[questionItem.problem_id-1]" -->
+        </el-form-item>
+      </el-card>
 
       <!-- <el-form-item v-for="(item, index) in subjectList" :key="index" :label="index + 1 + ''">
         <span v-if="item && (item.problem_type === 1 || item.problem_type === 2 || item.problem_type === 4)" v-html="item.content.body"></span>
@@ -77,7 +76,6 @@ export default {
       this.rules = data.rules
       this.homework = data.homework
       for (let tIndex in this.subjectList) {
-        console.log('for循环', tIndex)
         let questionArray = this.subjectList[tIndex].questionItems
         for (let qIndex in questionArray) {
           let question = questionArray[qIndex]

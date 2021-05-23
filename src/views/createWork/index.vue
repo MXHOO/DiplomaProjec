@@ -10,11 +10,6 @@
             <el-input v-model="work.homework_name" placeholder="请输入作业名称"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-select placeholder="请输入班级" v-model="className" style="width: 160px;">
-              <!-- <el-select-option></el-select-option> -->
-            </el-select>
-          </el-form-item>
-          <el-form-item>
             <el-button type="primary" @click="search">搜索</el-button>
           </el-form-item>
         </el-form>
@@ -28,7 +23,13 @@
         <p>没有数据，请先创建作业！</p>
       </div>
       <homeWork @saveHomework="saveHomework" v-for="item in list" :siteDetail="item" :key="item.pageID"
-        @deleteHomework="handlerDeleteHomework"></homeWork>
+        @deleteHomework="handlerDeleteHomework" @publishHomework="handlePublishHomework"></homeWork>
+    </div>
+    <div style="text-align:center; margin-bottom: 30px;">
+      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="[5, 10, 20]"
+        :current-page.sync="searchContent.current_page" :page-size="searchContent.page_size"
+        layout="sizes, total, prev, pager, next" :total="total">
+      </el-pagination>
     </div>
     <!-- <div class="rc-mysite__site-list-pagination" v-show="list.length !== 0">
       <el-pagination @change="pageChange" @showSizeChange="pageSizeChange" :total="total" show-size-changer
@@ -39,9 +40,9 @@
       </el-pagination>
     </div> -->
     <el-dialog title="创建作业" :visible="visible" @close="cancelModal" center width="500px">
-      <el-form :model="work" :rules="rules" :inline="true">
+      <el-form :model="work" :rules="rules" :inline="true" ref="form">
         <el-form-item label="作业名字:" placeholder="请输入作业名字" prop="homework_name">
-          <el-input v-model="work.homework_name"  style="width: 350px;"></el-input>
+          <el-input v-model="work.homework_name" style="width: 350px;"></el-input>
         </el-form-item>
         <el-form-item label="作业须知:" placeholder="请输入作业须知" prop="homework_notice">
           <el-input type="textarea" v-model="work.homework_notice" style="width: 350px;"></el-input>
@@ -57,7 +58,7 @@
 </template>
 <script>
 import homeWork from '@/components/homework/index.vue'
-import { createWork, getHomeWorList, deleteHomework } from '@/services/createWork.js'
+import { createWork, getHomeWorList, deleteHomework, publishedHomework } from '@/services/createWork.js'
 export default {
   components: {
     homeWork
@@ -74,40 +75,41 @@ export default {
       },
       rules: {
         homework_name: [{ trigger: 'blur', required: true, message: '请输入作业名称' }],
-        homework_notice: [{ trigger: 'blur', required: true, message: '请输入作业须知' }],
-        columns: [
-          {
-            title: '作业名字',
-            dataIndex: 'homework_name',
-            align: 'center'
-          },
-          {
-            title: '作业须知',
-            dataIndex: 'homework_notice',
-            align: 'center'
-          },
-          {
-            title: '最后修改时间',
-            dataIndex: 'last_modified_time',
-            align: 'center'
-          },
-          {
-            title: '操作',
-            dataIndex: 'opearte',
-            slots: { customRender: 'operation' }
-          }
-        ],
-        tableList: [...Array(100)].map((_, i) => ({
-          homework_id: i,
-          homework_name: '测试数据',
-          homework_notice: '作业须知',
-          last_modified_time: `20210310`
-        }))
+        homework_notice: [{ trigger: 'blur', required: true, message: '请输入作业须知' }]
       },
+      columns: [
+        {
+          title: '作业名字',
+          dataIndex: 'homework_name',
+          align: 'center'
+        },
+        {
+          title: '作业须知',
+          dataIndex: 'homework_notice',
+          align: 'center'
+        },
+        {
+          title: '最后修改时间',
+          dataIndex: 'last_modified_time',
+          align: 'center'
+        },
+        {
+          title: '操作',
+          dataIndex: 'opearte',
+          slots: { customRender: 'operation' }
+        }
+      ],
+      tableList: [...Array(100)].map((_, i) => ({
+        homework_id: i,
+        homework_name: '测试数据',
+        homework_notice: '作业须知',
+        last_modified_time: `20210310`
+      })),
       className: '',
       visible: false,
       list: [],
       total: 0,
+      currentPage: 1,
       searchContent: {
         current_page: 1,
         page_size: 10
@@ -126,12 +128,17 @@ export default {
     },
     async getSitesList () {
       const { data } = await getHomeWorList(this.searchContent)
+      this.total = data.total
       this.list = data.list || []
     },
-    async handleOk () {
-      const { data } = await createWork(this.work)
-      this.$notify.success('创建作业成功！')
-      this.$router.push({ path: `/edit/${data}` })
+    handleOk () {
+      this.$refs.form.validate(async (valid) => {
+        if (valid) {
+          const { data } = await createWork(this.work)
+          this.$notify.success('创建作业成功！')
+          this.$router.push({ path: `/edit/${data}` })
+        }
+      })
     },
     search () {
       // console.log('搜索')
@@ -146,12 +153,6 @@ export default {
       this.searchContent.page_index = current
       this.getSitesList()
     },
-    // 切换每页条数
-    pageSizeChange (current, size) {
-      this.searchContent.page_index = 1
-      this.searchContent.page_size = size
-      this.getSitesList()
-    },
     async handlerDeleteHomework (homeworkID) {
       await deleteHomework({ 'homework_id': homeworkID })
       this.$notify.success('作业删除成功！')
@@ -161,6 +162,18 @@ export default {
     },
     saveHomework () {
       // console.log('保存作业')
+    },
+    handleSizeChange (page) {
+      this.searchContent.page_size = page
+      this.getSitesList()
+    },
+    handleCurrentChange (current) {
+      this.searchContent.current_page = current
+      this.getSitesList()
+    },
+    async handlePublishHomework (param) {
+      await publishedHomework(param)
+      this.$message.success('作业发布成功！')
     }
   }
 }

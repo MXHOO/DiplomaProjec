@@ -1,16 +1,16 @@
 <template>
-  <div style="padding: 20px;">
-      <div>作业题目</div>
-      <el-button type="primary">提交作业</el-button>
-      <el-form>
-        <el-card class="exampaper-item-box" v-if="subjectList.length!==0">
-            <el-form-item :key="questionItem.itemOrder" :label="questionItem.itemOrder+'.'"
-              v-for="questionItem in subjectList" class="exam-question-item" label-width="50px"
-              :id="'question-'+ questionItem.problem_id">
-              <QuestionEdit :qType="questionItem.problem_type" :question="content"
-                :answer="answer.answerItems[questionItem.itemOrder-1]" />
-            </el-form-item>
-          </el-card>
+  <div style="margin: 20px;">
+    <el-row>
+      <el-col :span="18">作业题目</el-col>
+      <el-col :span="6"><el-button type="primary">提交作业</el-button></el-col>
+    </el-row>
+    <el-form>
+      <el-form-item :key="questionItem.itemOrder" :label="questionItem.itemOrder+'.'"
+        v-for="questionItem in subjectList" class="exam-question-item" label-width="50px"
+        :id="'question-'+ questionItem.problem_id">
+        <QuestionEdit :qType="questionItem.problem_type" :question="content"
+          :answer="answer.answerItems[questionItem.itemOrder-1]" />
+      </el-form-item>
 
       <!-- <el-form-item v-for="(item, index) in subjectList" :key="index" :label="index + 1 + ''">
         <span v-if="item && (item.problem_type === 1 || item.problem_type === 2 || item.problem_type === 4)" v-html="item.content.body"></span>
