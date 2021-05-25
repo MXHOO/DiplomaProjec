@@ -1,13 +1,17 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Layout from '@/layout'
-
+import { getUserInfo } from '@/services/userInfo.js'
+let role = []
+getUserInfo().then(({ data }) => {
+  role = data.role_names || []
+  console.log('角色', role)
+})
 Vue.use(Router)
 
 const constantRoutes = [
   {
     path: '/redirect',
-    role: ['teacher', 'admin', 'student'],
     component: Layout,
     hidden: true,
     children: [
@@ -20,14 +24,12 @@ const constantRoutes = [
   {
     path: '/login',
     name: 'Login',
-    role: ['teacher', 'admin', 'student'],
     component: () => import('@/views/login/index'),
     meta: { title: '登录' },
     hidden: true
   },
   {
     path: '/',
-    role: ['teacher', 'admin', 'student'],
     component: Layout,
     redirect: '/dashboard',
     children: [
@@ -42,7 +44,7 @@ const constantRoutes = [
   {
     path: '/data_total',
     component: Layout,
-    role: ['teacher', 'admin'],
+    hidden: role.includes('student'),
     children: [
       {
         path: 'data_total',
@@ -55,6 +57,7 @@ const constantRoutes = [
   {
     path: '/exam',
     component: Layout,
+    hidden: !role.includes('teacher'),
     name: 'ExamPage',
     role: ['teacher'],
     meta: {
@@ -95,107 +98,23 @@ const constantRoutes = [
         meta: { title: '批改作业', noCache: true }
       },
       {
-        path: 'homework/classDetail',
+        path: 'homework/classDetail/:id',
         component: () => import('@/views/classDetail/index.vue'),
         name: 'classDetail',
         hidden: true,
         meta: { title: '作业班级详情', noCache: true }
-      },
-      {
-        path: 'question/edit/singleChoice',
-        component: () => import('@/views/exam/question/edit/single-choice'),
-        name: 'singleChoicePage',
-        meta: { title: '单选题编辑', noCache: true, activeMenu: '/exam/question/list' },
-        hidden: true
-      },
-      {
-        path: 'question/edit/multipleChoice',
-        component: () => import('@/views/exam/question/edit/multiple-choice'),
-        name: 'multipleChoicePage',
-        meta: { title: '多选题编辑', noCache: true, activeMenu: '/exam/question/list' },
-        hidden: true
-      },
-      {
-        path: 'question/edit/trueFalse',
-        component: () => import('@/views/exam/question/edit/true-false'),
-        name: 'trueFalsePage',
-        meta: { title: '判断题编辑', noCache: true, activeMenu: '/exam/question/list' },
-        hidden: true
-      },
-      {
-        path: 'question/edit/gapFilling',
-        component: () => import('@/views/exam/question/edit/gap-filling'),
-        name: 'gapFillingPage',
-        meta: { title: '填空题编辑', noCache: true, activeMenu: '/exam/question/list' },
-        hidden: true
-      },
-      {
-        path: 'question/edit/shortAnswer',
-        component: () => import('@/views/exam/question/edit/short-answer'),
-        name: 'shortAnswerPage',
-        meta: { title: '简答题编辑', noCache: true, activeMenu: '/exam/question/list' },
-        hidden: true
       }
     ]
   },
-  // {
-  //   path: '/task',
-  //   component: Layout,
-  //   name: 'TaskPage',
-  //   meta: {
-  //     title: '任务管理',
-  //     icon: 'task'
-  //   },
-  //   alwaysShow: true,
-  //   children: [
-  //     {
-  //       path: 'list',
-  //       component: () => import('@/views/task/list'),
-  //       name: 'TaskListPage',
-  //       meta: { title: '任务列表', noCache: true }
-  //     },
-  //     {
-  //       path: 'edit',
-  //       component: () => import('@/views/task/edit'),
-  //       name: 'TaskEditPage',
-  //       meta: { title: '任务创建', noCache: true }
-  //     },
-  //     {
-  //       path: 'student',
-  //       component: () => import('@/views/studentList/index.vue'),
-  //       name: 'stndentList',
-  //       meta: { title: '学生列表' }
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/answer',
-  //   component: Layout,
-  //   name: 'AnswerPage',
-  //   meta: {
-  //     title: '成绩管理',
-  //     icon: 'answer'
-  //   },
-  //   alwaysShow: true,
-  //   children: [
-  //     {
-  //       path: 'list',
-  //       component: () => import('@/views/answer/list'),
-  //       name: 'AnswerPageList',
-  //       meta: { title: '答卷列表', noCache: true }
-  //     }
-  //   ]
-  // },
   {
     path: '/person',
     component: Layout,
     name: 'Person',
-    role: ['teacher', 'admin'],
+    hidden: role.includes('admin'),
     meta: {
       title: '成员管理',
       icon: 'answer'
     },
-    alwaysShow: true,
     children: [
       {
         path: 'student',
@@ -220,26 +139,48 @@ const constantRoutes = [
   {
     path: '/my_work',
     component: Layout,
+    hidden: role.includes('student'),
     meta: {
       title: '我的作业管理',
       icon: 'exam'
     },
-    role: ['student'],
     children: [
       {
         path: 'list',
-        role: ['student'],
         component: () => import('@/views/myWork/index'),
         name: 'MyWork',
         meta: { title: '我的作业', icon: 'home' }
       },
       {
-        path: 'completedWork',
+        path: 'do',
+        hidden: true,
         role: ['student'],
-        component: () => import('@/views/completedWork/index'),
-        name: 'completedWork',
-        meta: { title: '作业详情', icon: 'home' }
+        component: () => import('@/views/myWork/do'),
+        name: 'DoMyWork',
+        meta: { title: '完成作业', icon: 'home' }
+      },
+      {
+        path: 'read',
+        hidden: true,
+        role: ['student'],
+        component: () => import('@/views/myWork/read'),
+        name: 'ReadMyWork',
+        meta: { title: '查看作业', icon: 'home' }
+      },
+      {
+        path: 'total',
+        role: ['student'],
+        component: () => import('@/views/myWork/index'),
+        name: 'Total',
+        meta: { title: '数据统计', icon: 'home' }
       }
+      // {
+      //   path: 'completedWork',
+      //   role: ['student'],
+      //   component: () => import('@/views/completedWork/index'),
+      //   name: 'completedWork',
+      //   meta: { title: '作业详情', icon: 'home' }
+      // }
     ]
   },
   {

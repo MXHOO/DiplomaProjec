@@ -62,7 +62,7 @@ export default {
         }
       ],
       classList: [
-        { class_id: 2 }
+        { class_id: 2, class_name: '软件1701' }
       ],
       teamList: [
         {
@@ -99,7 +99,13 @@ export default {
     },
     // 查看班级对应学生
     detail (row) {
-      this.$router.push('/exam/homework/classDetail')
+      this.$router.push({
+        path: `/exam/homework/classDetail/${row.class_id}`,
+        query: {
+          name: row.class_name,
+          id: row.class_id
+        }
+      })
     },
     searchHandler () {
       // console.log('搜索')

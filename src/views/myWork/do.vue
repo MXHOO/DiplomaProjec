@@ -1,16 +1,21 @@
 <template>
-  <div style="margin: 20px;">
+  <div style="padding: 20px;">
     <el-row>
-      <el-col :span="18">作业题目</el-col>
-      <el-col :span="6"><el-button type="primary">提交作业</el-button></el-col>
+      <el-col :span="18">
+        <p>作业题目</p>
+      </el-col>
+      <el-col :span="6">
+        <el-button type="primary" @click="submitForm">提交作业</el-button>
+      </el-col>
     </el-row>
     <el-form>
-      <el-form-item :key="questionItem.itemOrder" :label="questionItem.itemOrder+'.'"
-        v-for="questionItem in subjectList" class="exam-question-item" label-width="50px"
-        :id="'question-'+ questionItem.problem_id">
-        <QuestionEdit :qType="questionItem.problem_type" :question="content"
-          :answer="answer.answerItems[questionItem.itemOrder-1]" />
-      </el-form-item>
+      <el-card class="exampaper-item-box" v-if="subjectList.length!==0">
+        <el-form-item :key="questionItem.problem_id" :label="index+ 1 +'.'" v-for="(questionItem, index) in subjectList"
+          class="exam-question-item" label-width="50px" :id="'question-'+ questionItem.problem_id">
+          <QuestionEdit :qType="questionItem.problem_type" :question="questionItem.content"
+            :answer="answer.answerItem[index]" />
+        </el-form-item>
+      </el-card>
 
       <!-- <el-form-item v-for="(item, index) in subjectList" :key="index" :label="index + 1 + ''">
         <span v-if="item && (item.problem_type === 1 || item.problem_type === 2 || item.problem_type === 4)" v-html="item.content.body"></span>
@@ -50,6 +55,7 @@ export default {
   },
   data () {
     return {
+      homework_id: '111',
       subjectList: [],
       rules: [],
       homework: null,
@@ -72,20 +78,60 @@ export default {
       this.subjectList = data.problems || []
       this.rules = data.rules
       this.homework = data.homework
-      const problemList = data.problems || []
-      this.answer.push({ value: '' })
-      console.log(problemList.lenght)
+      const self = this
+      this.subjectList.forEach((item, index) => {
+        self.answer.answerItem.push({ questionId: self.subjectList[index].problem_id, content: null, contentArray: [], completed: false })
+      })
+      // const problemList = data.problems || []
+      // this.answer.push({ value: '' })
+      // console.log(problemList.lenght)
     },
     initAnswer () {
-      this.answer.id = this.form.id
-      let titleItemArray = this.form.titleItems
-      for (let tIndex in titleItemArray) {
-        let questionArray = titleItemArray[tIndex].questionItems
-        for (let qIndex in questionArray) {
-          let question = questionArray[qIndex]
-          this.answer.answerItems.push({ questionId: question.id, content: null, contentArray: [], completed: false, itemOrder: question.itemOrder })
+
+    },
+    submitForm () {
+      const unfinished = []
+      this.answer.answerItem.forEach((item, index) => {
+        if (!item.completed) {
+          unfinished.push(index + 1)
         }
+      })
+      if (unfinished.length > 0) {
+        this.$confirm(`题目${unfinished.join(',')}还未完成，确认提交？`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          console.log('_____')
+          console.log('提交答案', this.answer, this.getParams())
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消提交'
+          })
+        })
       }
+    },
+    getParams () {
+      const param = {
+        homework_id: this.homework_id,
+        problem_answer: []
+      }
+      const answer = this.answer.answerItem
+      this.subjectList.forEach((item, index) => {
+        if ((item.problem_type === 1 || item.problem_type === 3) && item.content) {
+          param.problem_answer.push({
+            problem_id: item.problem_id,
+            answer: [answer[index].content]
+          })
+        } else {
+          param.problem_answer.push({
+            problem_id: item.problem_id,
+            answer: answer[index].contentArray
+          })
+        }
+      })
+      return param
     }
   }
 }

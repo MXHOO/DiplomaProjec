@@ -5,8 +5,7 @@
     </el-row>
     <el-button type="primary" @click="showModal" style="margin: 20px;" size="small">创建题目</el-button>
     <!-- v-if="problem_ids.length > 0" -->
-    <el-button type="danger" @click="save" style="margin: 20px 0;" size="small">保存作业
-    </el-button>
+    <el-button type="danger" @click="save" style="margin: 20px 0;" size="small">保存作业</el-button>
     <show-subject ref="showSubjectRef" @delete="deleteSubject"></show-subject>
     <el-dialog :visible="visible" title="创建题目" @close="cancelModal" width="800px">
       <el-form label-width="100px">

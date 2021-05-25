@@ -1,6 +1,6 @@
 <template>
   <div v-loading="qLoading" style="line-height:1.8">
-    <div v-if="qType==1||qType==2||qType==3||qType==4||qType==5">
+    <div v-if="qType==1||qType==2||qType==3||qType==4">
       <div v-if="qType==1" >
         <div class="q-title" v-html="question.title"/>
         <div class="q-content">

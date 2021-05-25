@@ -1,96 +1,100 @@
 <template>
   <div style="padding: 20px;">
-    <el-row>
-      <el-col :span="18"><p>作业题目</p></el-col>
-      <el-col :span="6">
-        <el-button type="primary">提交作业</el-button>
-      </el-col>
-    </el-row>
     <el-form>
-      <el-card class="exampaper-item-box" v-if="subjectList.length!==0">
-        <el-form-item :key="questionItem.problem_id" :label="index+ 1 +'.'" v-for="(questionItem, index) in subjectList"
-          class="exam-question-item" label-width="50px" :id="'question-'+ questionItem.problem_id">
-          <QuestionEdit :qType="questionItem.problem_type" :question="questionItem.content" />
-          <!-- :answer="answer.answerItems[questionItem.problem_id-1]" -->
-        </el-form-item>
-      </el-card>
-
-      <!-- <el-form-item v-for="(item, index) in subjectList" :key="index" :label="index + 1 + ''">
-        <span v-if="item && (item.problem_type === 1 || item.problem_type === 2 || item.problem_type === 4)" v-html="item.content.body"></span>
-        <span v-if="item.problem_type === 3" v-html="replaceFill(item.content.body)"></span>
-        <div v-if="item && item.problem_type === 1">
-          <el-radio-group v-model="radio">
-            <el-radio style="display: block; line-height: 30px; height: 30px;"
-              v-for="(option,select_index) in item.content.options" :key="select_index" :value="option.key"
-              :label="option.key">
-              {{option.key}}. {{option.value}}
-            </el-radio>
-          </el-radio-group>
-        </div>
-
-        <div v-if="item && item.problem_type === 2">
-          <el-checkbox-group v-model="check">
-            <el-checkbox v-for="(option,select_index) in item.content.options" :key="select_index" :value="option.key">
-              {{option.key}}. {{option.value}}
-            </el-checkbox>
-          </el-checkbox-group>
-        </div>
-
-        <div v-if="item && item.problem_type === 3">
-        </div>
-
-        <div v-if="item && item.problem_type === 4"/>
-      </el-form-item> -->
+      <el-form-item label="状态">
+        <!-- <el-select>
+          <el-option v-for="ite"></el-option>
+        </el-select> -->
+      </el-form-item>
     </el-form>
+    <el-table :data="tableList">
+      <el-table-column label="发布id" prop="publish_id"></el-table-column>
+      <el-table-column label="作业名称" prop="homework_name"></el-table-column>
+      <el-table-column label="发布人" prop="publisher_name"></el-table-column>
+      <el-table-column label="发布时间" prop="publish_time"></el-table-column>
+      <el-table-column label="截止时间" prop="deadline_time"></el-table-column>
+      <el-table-column label="作业状态">
+        <template slot-scope="scope">
+          {{statusList[scope.row.homework_status]}}
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" width="200">
+        <template slot-scope="scope">
+          <el-button v-if="scope.row.homework_status === 'unStart'" size="small" type="primary"
+            @click="start(scope.row)">开始做题</el-button>
+          <el-button v-if="scope.row.homework_status === 'done'" size="small" type="warning" @click="detail(scope.row)">
+            查看详情</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
   </div>
 </template>
 <script>
-import QuestionEdit from './components/questionEdit'
-import { getSubjects } from '@/services/createSubject.js'
+import { getMyWorkList } from '@/services/myWork.js'
 export default {
-  components: {
-    QuestionEdit
-  },
   data () {
     return {
-      subjectList: [],
-      rules: [],
-      homework: null,
-      answer: {
-        answerItem: []
+      tableList: [
+        {
+          publish_id: 3,
+          publisher_name: '发布人的名字',
+          homework: {
+            homework_id: 1,
+            homework_name: '作业名称1',
+            homework_notice: '作业须知1',
+            last_modified_time: '2021-03-01 15:31:09'
+          },
+          deadline_time: '2021-03-05 16:26:28',
+          publish_time: '2021-03-05 17:59:08',
+          homework_status: 'unStart'
+        },
+        {
+          publish_id: 4,
+          publisher_name: '发布人的名字',
+          homework: {
+            homework_id: 1,
+            homework_name: '作业名称1',
+            homework_notice: '作业须知1',
+            last_modified_time: '2021-03-01 15:31:09'
+          },
+          deadline_time: '2021-03-05 16:26:28',
+          publish_time: '2021-03-05 17:59:08',
+          homework_status: 'doing'
+        },
+        {
+          publish_id: 5,
+          publisher_name: '发布人的名字',
+          homework: {
+            homework_id: 1,
+            homework_name: '作业名称1',
+            homework_notice: '作业须知1',
+            last_modified_time: '2021-03-01 15:31:09'
+          },
+          deadline_time: '2021-03-05 16:26:28',
+          publish_time: '2021-03-05 17:59:08',
+          homework_status: 'done'
+        }
+      ],
+      statusList: {
+        'unStart': '未开始',
+        'done': '已完成',
+        'doing': '进行中',
+        'expire': '已过期'
       }
     }
   },
   created () {
-    this.getList()
   },
   methods: {
-    replaceFill (html) {
-      const temp = html.replace(/【填空】/g, '<input class="fillContent" style="margin: 10px;"/>')
-      return temp
-    },
-    // 获取作业列表
     async getList () {
-      const { data } = await getSubjects({ homework_id: 15 })
-      this.subjectList = data.problems || []
-      this.rules = data.rules
-      this.homework = data.homework
-      for (let tIndex in this.subjectList) {
-        let questionArray = this.subjectList[tIndex].questionItems
-        for (let qIndex in questionArray) {
-          let question = questionArray[qIndex]
-          this.answer.answerItems.push({ questionId: question.id, content: null, contentArray: [], completed: false, itemOrder: question.itemOrder })
-        }
-      }
-      // const problemList = data.problems || []
-      // this.answer.push({ value: '' })
-      // console.log(problemList.lenght)
+      const { data } = await getMyWorkList()
+      console.log(data)
     },
-    initAnswer () {
-
+    start (row) {
+      this.$router.push('/my_work/do')
     },
-    submitForm () {
-      console.log('答案', this.answer)
+    detail (row) {
+      this.$router.push('/my_work/read')
     }
   }
 }

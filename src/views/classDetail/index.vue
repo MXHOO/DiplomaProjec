@@ -1,6 +1,7 @@
 <template>
   <div style="margin: 20px;">
     <el-form :model="form" :inline="true">
+      <el-form-item label="班级：" style="width: 300px;">{{$route.query.name}}</el-form-item>
       <el-form-item label="学生：">
         <el-input v-model="form.student"></el-input>
       </el-form-item>
