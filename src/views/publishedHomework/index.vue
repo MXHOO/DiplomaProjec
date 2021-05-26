@@ -30,11 +30,12 @@
           </el-table-column>
         </el-table>
       </el-table-column>
-      <el-table-column prop="homework_id" label="作业ID">
+      <el-table-column prop="publish_id" label="发布ID">
       </el-table-column>
       <el-table-column prop="homework_name" label="作业名称">
       </el-table-column>
-      <el-table-column prop="" label="最后修改时间"></el-table-column>
+      <el-table-column prop="publish_time" label="发布时间"></el-table-column>
+      <el-table-column prop="deadline_time" label="截止时间"></el-table-column>
     </el-table>
     <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="[5, 10, 20]"
       :current-page.sync="searchContent.current_page" :page-size="searchContent.page_size"

@@ -57,15 +57,17 @@
         <el-button @click="clearValid">取消</el-button>
       </template>
     </el-dialog>
-    <el-dialog title="发布作业" :visible.sync="publishedVisible" width="500px">
+    <el-dialog title="发布作业" :visible.sync="publishedVisible" width="500px" @close="clear">
       <el-form :model="publishContent" label-width="100px" :rules="publishRule" ref="publishForm">
         <el-form-item label="班级:" prop="class_id">
           <el-select v-model="publishContent.class_id" multiple style="width: 300px;">
-            <el-option v-for="item in classList" :key="item.key" :label="item.val" :value="item.val"></el-option>
+            <el-option v-for="item in classList" :key="item.class_id" :label="item.class_name" :value="item.class_id">
+            </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="截止时间:" prop="deadline_time">
-          <el-date-picker v-model="publishContent.deadline_time"  style="width: 300px;" type="datetime" placeholder="选择日期时间">
+          <el-date-picker v-model="publishContent.deadline_time" style="width: 300px;" type="datetime"
+            placeholder="选择日期时间">
           </el-date-picker>
         </el-form-item>
       </el-form>
@@ -76,12 +78,20 @@
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
+import { getClasses } from '@/services/createWork.js'
+import { getUserInfo } from '@/services/userInfo.js'
 export default {
   props: {
     siteDetail: {
       type: Object,
       default: () => { }
     }
+  },
+  computed: {
+    ...mapGetters([
+      'userInfo'
+    ])
   },
   data () {
     return {
@@ -107,14 +117,31 @@ export default {
         deadline_time: ''
       },
       classList: [
-        { key: 1, val: '软件1701' },
+        { class_id: 1, val: '软件1701' },
         { key: 2, val: '软件1702' },
         { key: 3, val: '软件1703' },
         { key: 4, val: '软件1704' }
       ]
     }
   },
+  async created () {
+    await this.getUserInfo()
+    this.getTeachClass()
+  },
   methods: {
+    async getTeachClass () {
+      const param = {
+        class_ids: this.userInfo.teach_class_ids
+      }
+      const { data } = await getClasses(param)
+      this.classList = data || []
+    },
+    async getUserInfo () {
+      if (!this.userInfo) {
+        const { data } = await getUserInfo()
+        this.$store.commit('user/setUserInfo', data)
+      }
+    },
     editSite () {
       this.form = Object.assign({}, this.siteDetail)
       this.editVisible = true
@@ -152,6 +179,9 @@ export default {
         self.$emit('deleteHomework', self.siteDetail.homework_id)
       }).catch(_ => { })
     },
+    clear () {
+      this.$refs.publishContent && this.$refs.publishContent.resetFields()
+    },
     publish () {
       this.$refs.publishForm.validate(valid => {
         if (valid) {
@@ -159,10 +189,12 @@ export default {
           const param = {
             homework_id: self.siteDetail.homework_id,
             deadline_time: new Date(this.publishContent.deadline_time).getTime(),
-            class_ids: this.publishContent.class_id.join(',')
+            class_ids: this.publishContent.class_id
           }
           this.$confirm(`发布作业${self.siteDetail.homework_id}`, '确认').then(_ => {
             self.$emit('publishHomework', param)
+            this.clear()
+            this.publishedVisible = false
           })
         }
       })
