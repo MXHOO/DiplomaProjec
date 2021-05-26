@@ -29,3 +29,7 @@ export function deleteHomework (params = {}) {
 export function publishedHomework (params = {}) {
   return post('/publish/homework', params)
 }
+
+export function getClasses (params = {}) {
+  return post('/class/info_list', params)
+}

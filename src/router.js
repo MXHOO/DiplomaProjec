@@ -5,7 +5,6 @@ import { getUserInfo } from '@/services/userInfo.js'
 let role = []
 getUserInfo().then(({ data }) => {
   role = data.role_names || []
-  console.log('角色', role)
 })
 Vue.use(Router)
 
