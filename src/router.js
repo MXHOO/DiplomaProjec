@@ -57,9 +57,8 @@ const constantRoutes = [
   {
     path: '/exam',
     component: Layout,
-    hidden: !role.includes('teacher'),
+    // hidden: !role.includes('teacher'),
     name: 'ExamPage',
-    role: ['teacher'],
     meta: {
       title: '作业管理',
       icon: 'exam'

@@ -1,19 +1,21 @@
 <template>
   <div v-loading="qLoading" style="line-height:1.8">
     <div v-if="qType==1||qType==2||qType==3||qType==4">
+      <!-- 单选题 -->
       <div v-if="qType==1" >
-        <div class="q-title" v-html="question.title"/>
+        <div class="q-title" v-html="question.body"/>
         <div class="q-content">
-          <el-radio-group v-model="answer.content">
-            <el-radio  v-for="item in question.items"  :key="item.prefix"  :label="item.prefix" >
-              <span class="question-prefix">{{item.prefix}}.</span>
-              <span v-html="item.content" class="q-item-span-content"></span>
-            </el-radio>
-          </el-radio-group>
+          <el-radio-group v-model="answer.content" @change="chananswer.completed = truege" >
+          <el-radio  v-for="item in question.options"  :key="item.key"  :label="item.key" :disabled=true>
+            <span class="question-prefix">{{item.key}}.</span>
+            <span v-html="item.value" class="q-item-span-content"></span>
+          </el-radio>
+        </el-radio-group>
         </div>
       </div>
+      <!-- 多选题 -->
       <div v-else-if="qType==2" >
-        <div class="q-title" v-html="question.title"/>
+        <div class="q-title" v-html="question.body"/>
         <div class="q-content">
           <el-checkbox-group v-model="answer.contentArray" >
             <el-checkbox v-for="item in question.items" :label="item.prefix" :key="item.prefix" >
@@ -23,8 +25,9 @@
           </el-checkbox-group>
         </div>
       </div>
+      <!-- 填空题 -->
       <div v-else-if="qType==3" >
-        <div class="q-title" v-html="question.title" style="display: inline;margin-right: 10px"/>
+        <div class="q-title" v-html="question.body" style="display: inline;margin-right: 10px"/>
         <span style="padding-right: 10px;">(</span>
         <el-radio-group v-model="answer.content">
           <el-radio  v-for="item in question.items"  :key="item.prefix"  :label="item.prefix">
@@ -34,7 +37,7 @@
         <span style="padding-left: 10px;">)</span>
       </div>
       <div v-else-if="qType==4" >
-        <div class="q-title" v-html="question.title"/>
+        <div class="q-title" v-html="question.body"/>
         <div v-if="answer.contentArray!==null">
           <el-form-item :label="item.prefix" :key="item.prefix"  v-for="item in question.items"  label-width="50px" style="margin-top: 10px;margin-bottom: 10px;">
             <el-input v-model="answer.contentArray[item.prefix-1]"  />
@@ -115,6 +118,9 @@ export default {
     doRightTextFormatter (status) {
       return this.enumFormat(this.doRightEnum, status)
     }
+  },
+  created () {
+    console.log(this.question)
   },
   computed: {
     ...mapGetters('enumItem', ['enumFormat']),

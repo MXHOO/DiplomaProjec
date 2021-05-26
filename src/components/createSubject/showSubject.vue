@@ -60,7 +60,7 @@ export default {
       return this.subjectList.length.fill(null)
     },
     replaceFill (html) {
-      const temp = html.replace(/【填空】/g, '<input class="fillContent" style="margin: 10px;"/>')
+      const temp = html.replace(/【填空】/g, '&nbsp;___&nbsp;')
       return temp
     },
     deleteSubject (id, index) {

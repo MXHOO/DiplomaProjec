@@ -64,7 +64,7 @@ export default {
     }
   },
   created () {
-
+    this.getList()
   },
   methods: {
     questionDoRightTag (status) {
@@ -82,9 +82,6 @@ export default {
       this.subjectList.forEach((item, index) => {
         self.answer.answerItem.push({ questionId: self.subjectList[index].problem_id, content: null, contentArray: [], completed: false })
       })
-      // const problemList = data.problems || []
-      // this.answer.push({ value: '' })
-      // console.log(problemList.lenght)
     }
   },
   computed: {
