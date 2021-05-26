@@ -30,7 +30,8 @@
   </div>
 </template>
 <script>
-import { getMyWorkList } from '@/services/myWork.js'
+// eslint-disable-next-line no-unused-vars
+import { getMyWorkList, getHomeworkDetail } from '@/services/myWork.js'
 export default {
   data () {
     return {

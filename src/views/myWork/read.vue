@@ -41,6 +41,8 @@
 
 <script>
 import { getSubjects } from '@/services/createSubject.js'
+// eslint-disable-next-line no-unused-vars
+import { getMyWorkList, getHomeworkDetail } from '@/services/myWork.js'
 import { mapState, mapGetters } from 'vuex'
 // import { formatSeconds } from '@/utils'
 import QuestionAnswerShow from './components/questionShow'

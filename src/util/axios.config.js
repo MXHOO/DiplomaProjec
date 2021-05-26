@@ -1,7 +1,7 @@
 // 封装axios
 import axios from 'axios'
 import vue from 'vue'
-const baseURL = process.env.NODE_ENV === 'development' ? '/api' : ''
+const baseURL = process.env.NODE_ENV === 'development' ? '/api' : '/homeworkFeedBack'
 const router = vue.prototype.$$router
 const service = axios.create({
   timeout: 20000,

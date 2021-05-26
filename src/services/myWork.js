@@ -9,3 +9,7 @@ export function getMyWorkList (params = {}) {
 export function submitWork (params = {}) {
   return postMessage('/homework/submit', params)
 }
+
+export function getHomeworkDetail (params = {}) {
+  return get('/homework/detail', params)
+}
