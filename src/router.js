@@ -1,11 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Layout from '@/layout'
-import { getUserInfo } from '@/services/userInfo.js'
-let role = []
-getUserInfo().then(({ data }) => {
-  role = data.role_names || []
-})
+
 Vue.use(Router)
 
 const constantRoutes = [
@@ -43,27 +39,13 @@ const constantRoutes = [
   {
     path: '/exam',
     component: Layout,
-    // hidden: !role.includes('teacher'),
+    role: ['teacher'],
     name: 'ExamPage',
     meta: {
       title: '作业管理',
       icon: 'exam'
     },
     children: [
-      {
-        path: 'paper/edit',
-        component: () => import('@/views/exam/paper/edit'),
-        name: 'ExamPaperEdit',
-        meta: { title: '试卷编辑', noCache: true, activeMenu: '/exam/paper/list' },
-        hidden: true
-      },
-      {
-        path: 'question/list',
-        component: () => import('@/views/exam/question/list'),
-        name: 'ExamQuestionPageList',
-        meta: { title: '题目列表', noCache: true },
-        hidden: true
-      },
       {
         path: 'homework/list',
         name: 'HomeWrokList',
@@ -75,12 +57,6 @@ const constantRoutes = [
         component: () => import('@/views/publishedHomework/index'),
         name: 'publishedHomework',
         meta: { title: '已发布作业', noCache: true }
-      },
-      {
-        path: 'homework/correct',
-        name: 'HomeWrokCcorrect',
-        component: () => import('@/views/createWork/index.vue'),
-        meta: { title: '批改作业', noCache: true }
       },
       {
         path: 'homework/classDetail/:id',
@@ -95,7 +71,7 @@ const constantRoutes = [
     path: '/person',
     component: Layout,
     name: 'Person',
-    hidden: role.includes('admin'),
+    role: ['admin'],
     meta: {
       title: '成员管理',
       icon: 'answer'
@@ -124,7 +100,7 @@ const constantRoutes = [
   {
     path: '/my_work',
     component: Layout,
-    hidden: role.includes('student'),
+    role: ['student'],
     meta: {
       title: '我的作业管理',
       icon: 'exam'
@@ -159,13 +135,6 @@ const constantRoutes = [
         name: 'Total',
         meta: { title: '数据统计', icon: 'home' }
       }
-      // {
-      //   path: 'completedWork',
-      //   role: ['student'],
-      //   component: () => import('@/views/completedWork/index'),
-      //   name: 'completedWork',
-      //   meta: { title: '作业详情', icon: 'home' }
-      // }
     ]
   },
   {
@@ -205,7 +174,7 @@ const constantRoutes = [
         path: 'index',
         component: () => import('@/views/profile/index'),
         name: 'Profile',
-        meta: { title: '个人简介', icon: 'user', noCache: true }
+        meta: { title: '个人信息', icon: 'user', noCache: true }
       }
     ]
   },

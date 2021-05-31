@@ -50,7 +50,8 @@ export default {
       this.$router.push({
         path: `/my_work/read/${this.$route.query.publish_id}`,
         query: {
-          id: this.$route.query.publish_id
+          id: this.$route.query.publish_id,
+          user_id: row.user_id
         }
       })
     },

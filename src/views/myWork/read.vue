@@ -63,7 +63,8 @@ export default {
       subjectList: [],
       rules: [],
       homework: {},
-      submitList: []
+      submitList: [],
+      user_id: this.$route.query.user_id
     }
   },
   async created () {
@@ -75,7 +76,7 @@ export default {
       this.$el.querySelector(selector).scrollIntoView({ behavior: 'instant', block: 'center', inline: 'nearest' })
     },
     async getList () {
-      const { data } = await getHomeworkDetail({ publish_id: this.publish_id })
+      const { data } = await getHomeworkDetail({ publish_id: this.publish_id, user_id: this.user_id })
       this.subjectList = data.problems || []
       this.rules = data.rules
       this.homework = data

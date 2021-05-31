@@ -1,6 +1,6 @@
 <template>
- <!-- && isShow(item) -->
-  <div v-if="!item.hidden" class="menu-wrapper">
+ <!-- && roleRule(item) -->
+  <div v-if="!item.hidden && userInfo" class="menu-wrapper">
     <template
       v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!item.alwaysShow">
       <app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path)">
@@ -14,7 +14,7 @@
       <template slot="title">
         <item v-if="item.meta" :icon="item.meta && item.meta.icon" :title="item.meta.title" />
       </template>
-      <sidebar-item v-for="child in item.children" @click="test" :key="child.path" :is-nest="true" :item="child"
+      <sidebar-item v-for="child in item.children" :key="child.path" :is-nest="true" :item="child"
         :base-path="resolvePath(child.path)" class="nest-menu" />
     </el-submenu>
   </div>
@@ -59,27 +59,10 @@ export default {
     return {
     }
   },
+  created () {
+    this.getUserInfo()
+  },
   methods: {
-    test () {
-      console.log('测试一下')
-    },
-    isShow (item) {
-      if (item.role) {
-        if (this.userInfo) {
-          console.log('有用户信息')
-          item.role.forEach(element => {
-            console.log(this.userInfo.role_names.includes(element), element)
-            return this.userInfo.role_names.includes(element)
-          })
-        } else {
-          this.getUserInfo()
-          return false
-        }
-      } else {
-        console.log('啥都没有')
-        return false
-      }
-    },
     async getUserInfo () {
       if (!this.userInfo) {
         const { data } = await getUserInfo()
@@ -87,6 +70,8 @@ export default {
       }
     },
     hasOneShowingChild (children = [], parent) {
+      // const flag = this.roleRule(parent)
+      // console.log('flag', flag)
       const showingChildren = children.filter(item => {
         if (item.hidden) {
           return false
@@ -109,6 +94,17 @@ export default {
       }
 
       return false
+    },
+    roleRule (parent) {
+      let flag = false
+      if (parent.role) {
+        this.userInfo.role_names.forEach(item => {
+          flag = parent.role.includes(item)
+        })
+        return flag
+      } else {
+        return true
+      }
     },
     resolvePath (routePath) {
       if (isExternal(routePath)) {

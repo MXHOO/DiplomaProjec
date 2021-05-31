@@ -25,7 +25,8 @@
         </el-form-item>
         <el-form-item label="教授班级:">
           <el-select multiple v-model="form.class_id" style="width: 360px;">
-            <el-option v-for="item in classList" :key="item.class_id" :label="item.class_name" :value="item.class_id"></el-option>
+            <el-option v-for="item in classList" :key="item.class_id" :label="item.class_name" :value="item.class_id">
+            </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="账号">
@@ -44,15 +45,40 @@
         <el-button @click="addTeacher">确定</el-button>
       </div>
     </el-dialog>
+    <el-dialog :visible.sync="editVisible">
+      <el-form :form="editForm" label-width="100px" ref="editForm">
+        <el-form-item label="教师名字:">
+          <el-input v-model="editForm.user_name" style="width: 360px;"></el-input>
+        </el-form-item>
+        <el-form-item label="教授班级:">
+          <el-select multiple v-model="editForm.class_id" style="width: 360px;">
+            <el-option v-for="item in classList" :key="item.class_id" :label="item.class_name" :value="item.class_id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="管理权限:">
+          <el-select multiple v-model="editForm.role" style="width: 360px;">
+            <el-option v-for="item in roles" :key="item.key" :label="item.val" :value="item.key"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="邮箱:">
+          <el-input v-model="editForm.email" style="width: 360px;"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer">
+        <el-button @click="editTeacher">确定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
-import { addPerson, getPersonList, deletePerson } from '@/services/personManage.js'
+import { addPerson, getPersonList, deletePerson, getUserMsg, updataPerson } from '@/services/personManage.js'
 import { getAllClasses } from '@/services/classes.js'
 export default {
   data () {
     return {
       visible: false,
+      editVisible: false,
       form: {
         user_name: '',
         email: '',
@@ -65,7 +91,13 @@ export default {
         { key: 'admin', val: '管理员' }
       ],
       classList: [],
-      tableList: []
+      tableList: [],
+      editForm: {
+        user_name: '',
+        email: '',
+        role: '',
+        class_id: []
+      }
     }
   },
   created () {
@@ -80,6 +112,17 @@ export default {
       this.getList()
       this.$refs.form && this.$refs.form.resetFields()
     },
+    async editTeacher (row) {
+      const param = {
+        ...this.editForm,
+        user_id: this.user_id
+      }
+      await updataPerson(param)
+      this.$message.success('修改成功')
+      this.editVisible = false
+      this.getList()
+      this.$refs.editForm && this.$refs.editForm.resetFields()
+    },
     computedClass (classList) {
       const list = classList || []
       const name = list.map(item => item.class_name)
@@ -93,6 +136,15 @@ export default {
       const { data } = await getPersonList()
       const list = data || []
       this.tableList = list.filter(item => item.roles.includes('teacher'))
+    },
+    async edit (row) {
+      this.user_id = row.user_id
+      const { data } = await getUserMsg({ user_id: row.user_id })
+      this.editForm.email = data.email
+      this.editForm.user_name = data.user_name
+      this.editForm.role = data.role_names
+      this.editForm.class_id = data.teach_class_ids
+      this.editVisible = true
     },
     deleteTeacher (item) {
       this.$confirm(`确认删除教师${item.user_name}`, '提示', {

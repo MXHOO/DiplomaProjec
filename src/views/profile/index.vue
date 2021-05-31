@@ -2,11 +2,6 @@
   <div class="app-container">
     <div>
       <el-row :gutter="20">
-
-        <el-col :span="6" :xs="24">
-          <user-card  :userInfo="userInfo" />
-        </el-col>
-
         <el-col :span="18" :xs="24">
           <el-card>
             <el-tabs active-name="account">
@@ -23,7 +18,7 @@
 </template>
 
 <script>
-import UserCard from './components/UserCard'
+// import UserCard from './components/UserCard'
 // import Timeline from './components/Timeline'
 import Account from './components/Account'
 import userApi from '@/api/user'
@@ -42,7 +37,7 @@ export default {
       }
     }
   },
-  components: { UserCard, Account },
+  components: { Account },
   created () {
     let _this = this
     userApi.getCurrentUser().then(re => {
