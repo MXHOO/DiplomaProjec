@@ -36,11 +36,16 @@ export default {
         this.editor.menus.extend(key, fillMenu)
         editorConfig(this.editor)
         this.editor.config.menus.push(key)
+        this.editor.config.onchange = function (newHtml) {
+          self.content.html = newHtml
+          const num = newHtml.match(/【填空】/g) || []
+          self.$emit('fill', num.length || 0)
+        }
       } else {
         editorConfig(this.editor)
-      }
-      this.editor.config.onchange = function (newHtml) {
-        self.content.html = newHtml
+        this.editor.config.onchange = function (newHtml) {
+          self.content.html = newHtml
+        }
       }
       this.editor.create()
       this.stemList.push(this.editor)

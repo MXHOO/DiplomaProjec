@@ -41,19 +41,6 @@ const constantRoutes = [
     ]
   },
   {
-    path: '/data_total',
-    component: Layout,
-    hidden: role.includes('student'),
-    children: [
-      {
-        path: 'data_total',
-        component: () => import('@/views/dashboard/index'),
-        name: 'DataTotal',
-        meta: { title: '数据统计', icon: 'home' }
-      }
-    ]
-  },
-  {
     path: '/exam',
     component: Layout,
     // hidden: !role.includes('teacher'),
@@ -150,7 +137,7 @@ const constantRoutes = [
         meta: { title: '我的作业', icon: 'home' }
       },
       {
-        path: 'do',
+        path: 'do/:id',
         hidden: true,
         role: ['student'],
         component: () => import('@/views/myWork/do'),
@@ -158,7 +145,7 @@ const constantRoutes = [
         meta: { title: '完成作业', icon: 'home' }
       },
       {
-        path: 'read',
+        path: 'read/:id',
         hidden: true,
         role: ['student'],
         component: () => import('@/views/myWork/read'),
@@ -168,7 +155,7 @@ const constantRoutes = [
       {
         path: 'total',
         role: ['student'],
-        component: () => import('@/views/myWork/index'),
+        component: () => import('@/views/myWork/total'),
         name: 'Total',
         meta: { title: '数据统计', icon: 'home' }
       }

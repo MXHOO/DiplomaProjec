@@ -38,6 +38,8 @@ export default {
     async addTeam () {
       await addTeam({ class_name: this.class_name })
       this.$message.success('添加成功')
+      this.visible = false
+      this.class_name = ''
       this.init()
     }
   }

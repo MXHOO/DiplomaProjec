@@ -5,22 +5,25 @@
       <el-form-item label="学生：">
         <el-input v-model="form.student"></el-input>
       </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="search">查找</el-button>
-      </el-form-item>
     </el-form>
     <el-table :data="tableData">
-      <el-table-column label="学生ID" prop="student_id"></el-table-column>
-      <el-table-column label="完成状态" prop="status"></el-table-column>
+      <el-table-column label="学生ID" prop="user_id"></el-table-column>
+      <el-table-column label="学生名字" prop="user_name"></el-table-column>
+      <el-table-column label="完成状态">
+        <template slot-scope="scope">
+          {{statusList[scope.row.homework_status]}}
+        </template>
+      </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.status === '已完成'" type="primary" size="small" @click="showDetail(scope.row)">查看详情</el-button>
+          <el-button v-if="scope.row.homework_status === 'done'" type="primary" size="small" @click="showDetail(scope.row)">查看详情</el-button>
         </template>
       </el-table-column>
     </el-table>
   </div>
 </template>
 <script>
+import { getCompletion } from '@/services/published'
 export default {
   data () {
     return {
@@ -28,14 +31,36 @@ export default {
         student: ''
       },
       tableData: [
-        { student_id: 1, status: '已完成' },
-        { student_id: 2, status: '未完成' }
-      ]
+        { user_id: 1, status: '已完成' },
+        { user_id: 2, status: '未完成' }
+      ],
+      statusList: {
+        'unStart': '未开始',
+        'done': '已完成',
+        'doing': '进行中',
+        'expire': '已过期'
+      }
     }
+  },
+  created () {
+    this.getList()
   },
   methods: {
     showDetail (row) {
-      this.$router.push('/my_work/list')
+      this.$router.push({
+        path: `/my_work/read/${this.$route.query.publish_id}`,
+        query: {
+          id: this.$route.query.publish_id
+        }
+      })
+    },
+    async getList () {
+      const param = {
+        class_id: this.$route.query.class_id,
+        publish_id: this.$route.query.publish_id
+      }
+      const { data } = await getCompletion(param)
+      this.tableData = data
     },
     search () {
 

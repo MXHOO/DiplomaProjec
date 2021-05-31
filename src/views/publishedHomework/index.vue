@@ -1,15 +1,15 @@
 <template>
   <div style="padding: 20px;">
-    <el-form :model="search" size="small" :inline="true" label-width="100">
+    <el-form :model="searchContent" size="small" :inline="true" label-width="100">
       <el-form-item label="作业id">
-        <el-input v-model="search.homework_id"></el-input>
+        <el-input v-model="searchContent.homework_id"></el-input>
       </el-form-item>
       <el-form-item label="作业名称">
-        <el-input v-model="search.homework_name"></el-input>
+        <el-input v-model="searchContent.homework_name"></el-input>
       </el-form-item>
       <el-form-item label="班级">
-        <el-select v-model="search.class">
-          <el-option v-for="item in teamList" :key="item.key" :label="item.val" :value="item.val"></el-option>
+        <el-select v-model="searchContent.class" clearable>
+          <el-option v-for="item in teamList" :key="item.class_id" :label="item.class_name" :value="item.class_id"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -19,20 +19,26 @@
     <el-table :data="list" size="small">
       <el-table-column type="expand">
         <!-- 作业对应的班级 -->
-        <el-table :data="classList">
+        <template slot-scope="props">
+          <el-table :data="props.row.class">
           <el-table-column prop="class_id" label="班级ID">
           </el-table-column>
+          <el-table-column prop="class_name" label="班级名字"></el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
-              <el-button @click="dataAnalyse(scope.row)" size="small" type="success">数据分析</el-button>
-              <el-button @click="detail(scope.row)" size="small">查看班级详情数据</el-button>
+              <el-button @click="dataAnalyse(scope.row, props.row.publish_id)" size="small" type="success">数据分析</el-button>
+              <el-button @click="detail(scope.row, props.row.publish_id)" size="small">查看班级详情数据</el-button>
             </template>
           </el-table-column>
         </el-table>
+        </template>
       </el-table-column>
       <el-table-column prop="publish_id" label="发布ID">
       </el-table-column>
-      <el-table-column prop="homework_name" label="作业名称">
+      <el-table-column label="作业名称">
+        <template slot-scope="scope">
+          <div>{{ scope.row.homework && scope.row.homework.homework_name}}</div>
+        </template>
       </el-table-column>
       <el-table-column prop="publish_time" label="发布时间"></el-table-column>
       <el-table-column prop="deadline_time" label="截止时间"></el-table-column>
@@ -47,41 +53,58 @@
   </div>
 </template>
 <script>
-import { publishedList } from '@/services/published'
+import { mapGetters } from 'vuex'
+import { getClasses } from '@/services/createWork.js'
+import { getUserInfo } from '@/services/userInfo.js'
+import { publishedList, dataAsy } from '@/services/published'
 export default {
   data () {
     return {
-      search: {
-        homework_id: '',
-        homework_name: '',
-        class: ''
-      },
-      list: [
-        {
-          homework_id: 1,
-          homework_name: '作业1'
-        }
-      ],
+      list: [],
       classList: [
         { class_id: 2, class_name: '软件1701' }
       ],
-      teamList: [
-        {
-          key: 1, val: '软件1701'
-        }
-      ],
+      teamList: [],
       analyseVisible: false,
       searchContent: {
+        homework_id: '',
+        homework_name: '',
+        class_id: '',
         page_size: 10,
         current_page: 1
       },
-      total: 10
+      total: 10,
+      asy: {
+        done_count: 0,
+        not_done_count: 0
+      }
     }
   },
-  created () {
-    // this.getList()
+  computed: {
+    ...mapGetters([
+      'userInfo'
+    ])
+  },
+  async created () {
+    this.getUserInfo().then(_ => {
+      this.getTeachClass()
+      this.getList()
+    })
   },
   methods: {
+    async getTeachClass () {
+      const param = {
+        class_ids: this.userInfo.teach_class_ids
+      }
+      const { data } = await getClasses(param)
+      this.teamList = data || []
+    },
+    async getUserInfo () {
+      if (!this.userInfo) {
+        const { data } = await getUserInfo()
+        this.$store.commit('user/setUserInfo', data)
+      }
+    },
     async getList () {
       const { data } = await publishedList(this.searchContent)
       this.list = data.list || []
@@ -95,21 +118,24 @@ export default {
       this.searchContent.current_page = current
       this.getList()
     },
-    dataAnalyse (row) {
+    // eslint-disable-next-line camelcase
+    async dataAnalyse (row, publish_id) {
       this.analyseVisible = true
+      const { data } = await dataAsy({ class_id: row.class_id, publish_id: publish_id })
+      this.asy = { ...data }
     },
     // 查看班级对应学生
-    detail (row) {
+    detail (row, id) {
       this.$router.push({
         path: `/exam/homework/classDetail/${row.class_id}`,
         query: {
-          name: row.class_name,
-          id: row.class_id
+          publish_id: id,
+          class_id: row.class_id
         }
       })
     },
     searchHandler () {
-      // console.log('搜索')
+      this.getList()
     },
     showData () {
       // eslint-disable-next-line no-undef
@@ -121,7 +147,7 @@ export default {
         },
         tooltip: {
           trigger: 'item',
-          formatter: '111'
+          formatter: ''
         },
         legend: {
           orient: 'vertical',
@@ -130,13 +156,13 @@ export default {
         },
         series: [
           {
-            name: '访问来源',
+            name: '数据对比',
             type: 'pie',
             radius: '55%',
             center: ['50%', '60%'],
             data: [
-              { value: 335, name: '已完成' },
-              { value: 310, name: '未完成' }
+              { value: this.asy.done_count, name: '已完成' },
+              { value: this.asy.not_done_count, name: '未完成' }
             ],
             itemStyle: {
               emphasis: {

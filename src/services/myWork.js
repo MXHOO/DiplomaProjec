@@ -1,5 +1,6 @@
 import {
-  get
+  get,
+  post
 } from '@/util/http.js'
 
 export function getMyWorkList (params = {}) {
@@ -7,9 +8,13 @@ export function getMyWorkList (params = {}) {
 }
 
 export function submitWork (params = {}) {
-  return postMessage('/homework/submit', params)
+  return post('/homework/submit', params)
 }
 
 export function getHomeworkDetail (params = {}) {
   return get('/homework/detail', params)
+}
+
+export function getDataAsy () {
+  return get('/homework/data_analysis')
 }

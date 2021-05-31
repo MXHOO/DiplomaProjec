@@ -3,7 +3,7 @@
     <div v-if="qType==1">
       <div class="q-title" v-html="question.body"/>
       <div class="q-content">
-        <el-radio-group v-model="answer.content" @change="chananswer.completed = truege" >
+        <el-radio-group v-model="answer.content" @change="answer.completed = true" >
           <el-radio  v-for="item in question.options"  :key="item.key"  :label="item.key" >
             <span class="question-prefix">{{item.key}}.</span>
             <span v-html="item.value" class="q-item-span-content"></span>
@@ -44,7 +44,7 @@
 
 <script>
 export default {
-  name: 'QuestionShow',
+  name: 'QuestionEdit',
   props: {
     question: {
       type: Object,
@@ -64,12 +64,8 @@ export default {
     }
   },
   created () {
-    console.log('初始化答案', this.answer, this.question)
   },
   methods: {
-    change () {
-      console.log('切换答案', this.answer)
-    }
   }
 }
 </script>

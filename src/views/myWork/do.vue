@@ -13,7 +13,7 @@
         <el-form-item :key="questionItem.problem_id" :label="index+ 1 +'.'"
           v-for="(questionItem, index) in getCpmputedList" class="exam-question-item" label-width="50px"
           :id="'question-'+ questionItem.problem_id">
-          <QuestionEdit :qType="questionItem.problem_type" :question="questionItem.content"
+          <QuestionEdit :qType="questionItem.problem_type" :isSubmit="questionItem.has_submit_answer" :question="questionItem.content"
             :answer="answer.answerItem[index]" />
         </el-form-item>
       </el-card>
@@ -22,14 +22,15 @@
 </template>
 <script>
 import QuestionEdit from './components/questionEdit'
-import { getSubjects } from '@/services/createSubject.js'
+import { getHomeworkDetail, submitWork } from '@/services/myWork.js'
 export default {
   components: {
     QuestionEdit
   },
   data () {
     return {
-      homework_id: '111',
+      homework_id: '',
+      publish_id: this.$route.query.id,
       subjectList: [],
       rules: [],
       homework: null,
@@ -41,7 +42,8 @@ export default {
   computed: {
     getCpmputedList () {
       const list = []
-      this.subjectList.forEach(item => {
+      this.subjectList.forEach(content => {
+        const item = content.problem_metadata
         if (item.problem_type === 3) {
           item.content.body = this.replaceFill(item.content.body)
         }
@@ -60,27 +62,28 @@ export default {
     },
     // 获取作业列表
     async getList () {
-      const { data } = await getSubjects({ homework_id: 15 })
+      const { data } = await getHomeworkDetail({ publish_id: this.publish_id })
       this.subjectList = data.problems || []
       this.rules = data.rules
-      this.homework = data.homework
+      this.homework_id = data.homework && data.homework.homework_id
       const self = this
-      this.subjectList.forEach((item, index) => {
+      this.subjectList.forEach((content, index) => {
+        const item = content.problem_metadata
         let temp = []
         if (item.problem_type === 3) {
           temp = item.content.body.match(/【填空】/g) || []
         }
         if (Array.isArray(temp) && temp.length > 0) {
-          self.answer.answerItem.push({ questionId: self.subjectList[index].problem_id, content: null, contentArray: temp.map(item => null), completed: false })
+          self.answer.answerItem.push({ questionId: self.subjectList[index].problem_metadata.problem_id, content: null, contentArray: temp.map(item => null), completed: false })
         } else {
-          self.answer.answerItem.push({ questionId: self.subjectList[index].problem_id, content: null, contentArray: [], completed: false })
+          self.answer.answerItem.push({ questionId: self.subjectList[index].problem_metadata.problem_id, content: null, contentArray: [], completed: false })
         }
       })
     },
     initAnswer () {
 
     },
-    submitForm () {
+    async submitForm () {
       const unfinished = []
       this.answer.answerItem.forEach((item, index) => {
         if (!item.completed) {
@@ -92,23 +95,45 @@ export default {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
-        }).then(() => {
-          console.log('提交答案', this.answer, this.getParams())
+        }).then(async _ => {
+          const { data } = await submitWork(this.getParams())
+          this.afterSubmit(data.score)
         }).catch(() => {
           this.$message({
             type: 'info',
             message: '已取消提交'
           })
         })
+      } else {
+        const { data } = await submitWork(this.getParams())
+        this.afterSubmit(data.score)
       }
+    },
+    afterSubmit (score) {
+      this.$message.success('提交成功！')
+      this.$confirm(`你的成绩是${score}`, '提示', {
+        confirmButtonText: '查看详情',
+        cancelButtonText: '取消',
+        type: 'success'
+      }).then(() => {
+        this.$router.push({
+          path: `/my_work/read/${this.publish_id}`,
+          query: {
+            id: this.publish_id
+          }
+        })
+      }).catch(() => {
+        this.$router.push('/my_work/list')
+      })
     },
     getParams () {
       const param = {
-        homework_id: this.homework_id,
+        publish_id: this.publish_id,
         problem_answer: []
       }
       const answer = this.answer.answerItem
-      this.subjectList.forEach((item, index) => {
+      this.subjectList.forEach((content, index) => {
+        const item = content.problem_metadata
         if ((item.problem_type === 1) && item.content) {
           param.problem_answer.push({
             problem_id: item.problem_id,

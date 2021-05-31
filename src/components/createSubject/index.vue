@@ -18,16 +18,32 @@
           </el-select>
         </el-form-item>
         <el-form-item label="题干">
-          <stem :subjectType="subjectType" ref="stemRef"></stem>
+          <stem :subjectType="subjectType" ref="stemRef" @fill="fill"></stem>
         </el-form-item>
         <el-form-item label="选项" v-if="subjectType === '单选' || subjectType === '多选'">
           <singleChoice ref="singleChoiceRef" v-if="subjectType === '单选'"></singleChoice>
           <multipleChoice ref="multipleChoiceRef" v-if="subjectType === '多选'"></multipleChoice>
         </el-form-item>
+        <div v-if="subjectType === '填空'">
+          <div v-for="(item,i) in fillList" :key="i">
+            <el-form-item label="是否模糊匹配">
+              <el-radio-group v-model="item.case_sensitive">
+                <el-radio :label="true">是</el-radio>
+                <el-radio :label="false">否</el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="答案">
+              <el-input v-model="item.content" style="width: 300px;"></el-input>
+            </el-form-item>
+            <el-form-item label="分值">
+              <el-input-number v-model="item.score" :min="1" :max="10" />
+            </el-form-item>
+          </div>
+        </div>
         <el-form-item label="备注">
           <remark ref="remark"></remark>
         </el-form-item>
-        <el-form-item label="分值">
+        <el-form-item label="分值" v-if="subjectType === '单选' || subjectType === '多选' || subjectType === '主观'">
           <el-input-number v-model="score" :min="1" :max="10" />
         </el-form-item>
       </el-form>
@@ -71,7 +87,18 @@ export default {
       edit: '',
       editor: null,
       visible: false,
-      subjectType: ''
+      subjectType: '',
+      fillList: [],
+      blanks: [
+        {
+          case_sensitive: false,
+          fuzzy_match: true,
+          answers: [
+            'aada'
+          ],
+          score: this.score
+        }
+      ]
     }
   },
   watch: {
@@ -95,6 +122,17 @@ export default {
     })
   },
   methods: {
+    fill (num) {
+      const list = []
+      for (let i = 0; i < num; i++) {
+        list[i] = {
+          content: '',
+          case_sensitive: '',
+          score: 1
+        }
+      }
+      this.fillList = list
+    },
     async getAllSubject () {
       const { data } = await getSubjects({ homework_id: this.homework_id })
       this.$refs.showSubjectRef.subjectList = data.problems
@@ -169,16 +207,17 @@ export default {
 
         case '填空':
           param.problem_type = 3
-          param.content.blanks = [
-            {
-              case_sensitive: false,
-              fuzzy_match: true,
-              answers: [
-                'aada'
-              ],
-              score: 1
+          param.content.blanks = this.fillList.map(item => {
+            return {
+              fuzzy_match: false,
+              case_sensitive: item.case_sensitive,
+              answers: [item.content],
+              score: item.score
             }
-          ]
+          })
+          let num = 0
+          this.fillList.forEach(item => { num = num + item.score })
+          param.content.score = num
           break
 
         case '主观':
@@ -222,6 +261,7 @@ export default {
         this.subjectType = '填空'
       }
       this.visible = false
+      this.subjectType = ''
     },
     // 题目类型改变
     selectChange () {
